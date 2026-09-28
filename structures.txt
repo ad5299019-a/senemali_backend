@@ -1,0 +1,141 @@
+STRUCTURE DU PROJET SENEMALI API
+================================
+
+Senemali API est une API REST developpee avec Java 21 et Spring Boot 3.3.5.
+Elle expose les fonctionnalites de la plateforme agricole Senemali pour les
+applications web et mobiles. La persistance utilise Spring Data JPA et MySQL.
+
+1. RACINE DU PROJET
+-------------------
+
+pom.xml
+    Configuration Maven : dependances, version Java, plugins Spring Boot,
+    compilation et traitement des annotations Lombok.
+
+mvnw / mvnw.cmd
+    Maven Wrapper pour construire et tester le projet sans installer Maven
+    manuellement (les prerequis Java restent necessaires).
+
+HELP.md
+    Aide de demarrage generee par Spring Initializr.
+
+src/main/java/com/senemali/api/
+    Code source Java de l'application.
+
+src/main/resources/
+    Configuration, fichiers statiques et templates utilises au runtime.
+
+src/test/java/com/senemali/api/
+    Tests automatises du projet.
+
+2. ORGANISATION DU CODE JAVA
+----------------------------
+
+SenemaliApiApplication.java
+    Point d'entree Spring Boot. Demarre l'application et le contexte Spring.
+
+config/
+    Configuration transversale de l'application : securite, CORS, MVC,
+    initialisation des donnees et documentation OpenAPI.
+
+controller/
+    Points d'entree HTTP de l'API. Chaque controleur recoit les requetes,
+    valide ou transmet les donnees au service approprie, puis retourne une
+    reponse HTTP. Les controleurs couvrent notamment l'authentification,
+    les acheteurs, agriculteurs, commandes, cultures, produits et services.
+
+ dto/request/ (package reel : dto/request/)
+    Objets de donnees recus par l'API. Ils definissent les champs attendus
+    par les operations et peuvent porter des contraintes de validation
+    Jakarta Validation. Exemples : AuthRequest, RegisterRequest,
+    AcheteursRequest et AdministrateurRequest.
+
+dto/response/
+    Objets de donnees renvoyes par l'API. Ils evitent d'exposer directement
+    les entites JPA et permettent de controler la forme des reponses.
+
+entity/
+    Entites JPA associees aux donnees persistantes : utilisateurs, acheteurs,
+    agriculteurs, fournisseurs, commandes, cultures, produits et autres
+    ressources metier. Les relations entre entites sont declarees ici.
+
+enums/
+    Types enumeres utilises par le domaine, par exemple les roles, les statuts
+    de commande, les statuts de validation et les types de notification.
+
+exception/
+    Exceptions metier et gestion centralisee des erreurs HTTP, dont les
+    ressources introuvables et le format ErrorResponse.
+
+mapper/
+    Conversion entre les DTO et les entites. Les mappers construisent aussi
+    les DTO de reponse, sans effectuer de recherche en base ni appliquer les
+    regles metier. Les services leur fournissent les entites relationnelles
+    deja resolues quand cela est necessaire.
+
+reponse/
+    Package de reponses globales partagees par l'API. Le nom est actuellement
+    ecrit "reponse" dans le code source.
+
+repository/
+    Interfaces Spring Data JPA pour lire, creer, modifier et supprimer les
+    entites, ainsi que pour declarer les requetes derivees.
+
+security/
+    Composants de securite et gestion des tokens JWT.
+
+service/
+    Interfaces qui definissent les operations metier disponibles.
+
+serviceImpl/
+    Implementations des services. Elles coordonnent les repositories et les
+    mappers, resolvent les relations, appliquent les regles metier et gerent
+    les transactions.
+
+3. PARCOURS D'UNE REQUETE
+-------------------------
+
+Client HTTP
+    -> Controller : recoit la requete et ses DTO
+    -> Service : applique les regles metier et orchestre l'operation
+    -> Repository : accede aux donnees via Spring Data JPA
+    -> Entites : representent les donnees persistantes et leurs relations
+    -> Mapper : convertit le resultat en DTO de reponse
+    -> Controller : retourne la reponse HTTP au client
+
+Les identifiants de relations recus dans les DTO sont generalement resolus
+par le service avec les repositories. Les valeurs calculees ou gerees par
+l'application (par exemple un statut initial, une date ou un montant) restent
+de la responsabilite du service.
+
+4. RESSOURCES
+--------------
+
+src/main/resources/application.properties
+    Proprietes Spring Boot et configuration de l'application. Les secrets et
+    identifiants d'environnement doivent etre fournis de facon appropriee et
+    ne pas etre publies dans le depot.
+
+src/main/resources/static/
+    Ressources statiques servies par Spring, si necessaire.
+
+src/main/resources/templates/
+    Templates de vues serveur, si necessaire.
+
+src/test/java/com/senemali/api/
+    Tests unitaires ou d'integration. Le test de contexte principal se trouve
+    dans SenemaliApiApplicationTests.java.
+
+5. TECHNOLOGIES PRINCIPALES
+---------------------------
+
+- Java 21
+- Spring Boot 3.3.5
+- Spring Web pour les endpoints REST
+- Spring Data JPA pour la persistance
+- MySQL comme base de donnees
+- Spring Security et JWT pour l'authentification et la securite
+- Jakarta Validation pour la validation des entrees
+- Lombok pour reduire le code repetitif
+- Springdoc OpenAPI pour la documentation de l'API
+- Maven pour la gestion des dependances, la compilation et les tests
