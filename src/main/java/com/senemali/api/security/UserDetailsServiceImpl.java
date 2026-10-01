@@ -21,10 +21,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Utilisateurs utilisateur = utilisateursRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé: " + email));
-        return new User(
-                utilisateur.getEmail(),
-                utilisateur.getMotDePasse(),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + utilisateur.getRole().name()))
-        );
+        return User.withUsername(utilisateur.getEmail())
+                .password(utilisateur.getMotDePasse())
+                .authorities(Collections.singletonList(
+                        new SimpleGrantedAuthority("ROLE_" + utilisateur.getRole().name())))
+                .disabled(!Boolean.TRUE.equals(utilisateur.getStatut()))
+                .build();
     }
 }

@@ -30,7 +30,7 @@ public class TutorielMapper {
                 .idCategorie(tutoriel.getCategorie() != null ? tutoriel.getCategorie().getIdCategorie() : null)
                 .nomCategorie(tutoriel.getCategorie() != null ? tutoriel.getCategorie().getNomCategorie() : null)
                 .idAdministrateur(tutoriel.getAdministrateur() != null
-                        ? tutoriel.getAdministrateur().getIdAdmistrateur() : null)
+                        ? tutoriel.getAdministrateur().getId() : null)
                 .build();
     }
 }

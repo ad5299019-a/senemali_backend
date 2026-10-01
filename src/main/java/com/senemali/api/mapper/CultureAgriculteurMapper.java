@@ -19,7 +19,7 @@ public class CultureAgriculteurMapper {
         return CultureAgriculteurResponse.builder()
                 .idCultureAgriculteur(association.getIdCultureAgriculteur())
                 .idAgriculteur(association.getAgriculteur() != null
-                        ? association.getAgriculteur().getIdAgriculteur() : null)
+                        ? association.getAgriculteur().getId() : null)
                 .nomAgriculteur(association.getAgriculteur() != null
                         ? association.getAgriculteur().getNom() : null)
                 .idCulture(association.getCulture() != null ? association.getCulture().getIdCulture() : null)

@@ -2,9 +2,9 @@ package com.senemali.api.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
@@ -15,14 +15,11 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "administrateurs")
+@PrimaryKeyJoinColumn(name = "id_administrateur", referencedColumnName = "id")
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 public class Administrateurs extends Utilisateurs {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idAdmistrateur;
 
     @OneToMany(mappedBy = "administrateur", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Financements> financements;
@@ -42,7 +39,7 @@ public class Administrateurs extends Utilisateurs {
     @OneToMany(mappedBy = "administrateur", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Tutoriels> tutoriels;
 
-    @OneToMany(mappedBy = "administrateur", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "administrateurValidation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Intrants> intrantsValides;
 
     @OneToMany(mappedBy = "administrateur", cascade = CascadeType.ALL, orphanRemoval = true)

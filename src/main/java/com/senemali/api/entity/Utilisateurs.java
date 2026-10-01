@@ -40,7 +40,7 @@ public class Utilisateurs {
     @Column(nullable = false, length = 35)
     private String localisation;
 
-    @Column(nullable = false, length = 8)
+    @Column(nullable = false, length = 255)
     private String motDePasse;
 
     private String photoProfil;

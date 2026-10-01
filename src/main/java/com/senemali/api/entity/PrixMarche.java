@@ -33,7 +33,7 @@ public class PrixMarche {
     private String unite;
 
     @Column(nullable = false)
-    private String Localisation;
+    private String localisation;
 
     private LocalDateTime dateObserv;
 

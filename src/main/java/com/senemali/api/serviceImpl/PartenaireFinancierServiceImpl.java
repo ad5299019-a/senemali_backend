@@ -10,6 +10,7 @@ import com.senemali.api.exception.ResourceNotFoundException;
 import com.senemali.api.mapper.PartenaireFinancierMapper;
 import com.senemali.api.repository.AdministrateurRepository;
 import com.senemali.api.repository.PartenaireFinancierRepository;
+import com.senemali.api.security.AccessControl;
 import com.senemali.api.service.PartenaireFinancierService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,11 +24,12 @@ public class PartenaireFinancierServiceImpl implements PartenaireFinancierServic
     private final PartenaireFinancierRepository partenaireRepository;
     private final AdministrateurRepository administrateurRepository;
     private final PartenaireFinancierMapper mapper;
+    private final AccessControl accessControl;
 
     @Override
     @Transactional
     public PartenaireFinancierResponse create(PartenaireFinancierRequest request) {
-        Administrateurs admin = administrateurRepository.findById(request.getIdAdministrateur())
+        Administrateurs admin = administrateurRepository.findById(accessControl.currentAdminId())
                 .orElseThrow(() -> new ResourceNotFoundException("Administrateur non trouvé"));
         PartenaireFinanciers partenaire = mapper.toEntity(request);
         partenaire.setAdministrateur(admin);

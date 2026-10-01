@@ -27,7 +27,7 @@ public class ConseilMapper {
                 .idCulture(conseil.getCulture() != null ? conseil.getCulture().getIdCulture() : null)
                 .nomCulture(conseil.getCulture() != null ? conseil.getCulture().getNomCulture() : null)
                 .idAdministrateur(conseil.getAdministrateur() != null
-                        ? conseil.getAdministrateur().getIdAdmistrateur() : null)
+                        ? conseil.getAdministrateur().getId() : null)
                 .build();
     }
 }

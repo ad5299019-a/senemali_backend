@@ -10,11 +10,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -55,14 +57,16 @@ public class AuthController {
     )
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Compte créé avec succès"),
-            @ApiResponse(responseCode = "400", description = "Email ou téléphone déjà utilisé"),
-            @ApiResponse(responseCode = "422", description = "Données invalides")
+            @ApiResponse(responseCode = "409", description = "Email ou téléphone déjà utilisé"),
+            @ApiResponse(responseCode = "400", description = "Données invalides")
     })
     public ResponseEntity<UtilisateurResponse> register(@Valid @RequestBody RegisterRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
     }
 
     @GetMapping("/me")
+    @PreAuthorize("isAuthenticated()")
+    @SecurityRequirement(name = "bearerAuth")
     @Operation(
             summary = "Profil de l'utilisateur connecté",
             description = "Retourne les infos de l'utilisateur dont le JWT est dans le header"
@@ -71,6 +75,6 @@ public class AuthController {
             @RequestHeader("Authorization") String authHeader) {
         // Extraire le token du header Bearer
         String token = authHeader.substring(7);
-        return ResponseEntity.ok(authService.getCurrentUser(token));
+        return ResponseEntity.ok(authService.getCurrentUser(authHeader.substring(7)));
     }
 }

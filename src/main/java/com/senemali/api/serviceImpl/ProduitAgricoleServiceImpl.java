@@ -66,7 +66,7 @@ public class ProduitAgricoleServiceImpl implements ProduitAgricoleService {
 
     @Override
     public List<ProduitAgricoleResponse> findByAgriculteur(Long idAgriculteur) {
-        return produitRepository.findByAgriculteur_IdAgriculteur(idAgriculteur).stream()
+        return produitRepository.findByAgriculteur_Id(idAgriculteur).stream()
                 .map(mapper::toResponse).collect(Collectors.toList());
     }
 

@@ -9,5 +9,4 @@ public class DetailCommandeRequest {
     private Long idProduit;
     private Long idIntrant;
     @NotNull @Positive private Integer quantite;
-    @NotNull @Positive private Integer prixUnitaire;
 }

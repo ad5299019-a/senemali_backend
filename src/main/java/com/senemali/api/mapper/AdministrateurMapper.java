@@ -18,7 +18,7 @@ public class AdministrateurMapper {
 
     public AdministrateurResponse toResponse(Administrateurs administrateur) {
         return AdministrateurResponse.builder()
-                .idAdministrateur(administrateur.getIdAdmistrateur())
+                .idAdministrateur(administrateur.getId())
                 .id(administrateur.getId())
                 .nom(administrateur.getNom())
                 .prenom(administrateur.getPrenom())

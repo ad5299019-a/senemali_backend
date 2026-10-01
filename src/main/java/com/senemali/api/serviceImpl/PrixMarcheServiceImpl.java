@@ -8,6 +8,7 @@ import com.senemali.api.exception.ResourceNotFoundException;
 import com.senemali.api.mapper.PrixMarcheMapper;
 import com.senemali.api.repository.AdministrateurRepository;
 import com.senemali.api.repository.PrixMarcheRepository;
+import com.senemali.api.security.AccessControl;
 import com.senemali.api.service.PrixMarcheService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,11 +23,12 @@ public class PrixMarcheServiceImpl implements PrixMarcheService {
     private final PrixMarcheRepository prixMarcheRepository;
     private final AdministrateurRepository administrateurRepository;
     private final PrixMarcheMapper mapper;
+    private final AccessControl accessControl;
 
     @Override
     @Transactional
     public PrixMarcheResponse create(PrixMarcheRequest request) {
-        Administrateurs admin = administrateurRepository.findById(request.getIdAdministrateur())
+        Administrateurs admin = administrateurRepository.findById(accessControl.currentAdminId())
                 .orElseThrow(() -> new ResourceNotFoundException("Administrateur non trouvé"));
         PrixMarche prix = mapper.toEntity(request);
         prix.setDateObserv(LocalDateTime.now());

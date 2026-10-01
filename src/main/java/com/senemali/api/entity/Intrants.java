@@ -20,7 +20,7 @@ public class Intrants {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
+    @Column(name = "id_intrant")
     private Long idIntrant;
 
     @Column(nullable = false)
@@ -53,6 +53,6 @@ public class Intrants {
     private List<DetailCommandes> detailsCommandes;
 
     @ManyToOne
-    @JoinColumn(name = "id_administrateur_validation", nullable = false)
+    @JoinColumn(name = "id_administrateur_validation")
     private Administrateurs administrateurValidation;
 }

@@ -32,7 +32,7 @@ public class Financements {
     @Column(nullable = false)
     private int montantMax;
 
-    private int imageUrl;
+    private String imageUrl;
 
     @Column(nullable = false)
     private Boolean disponible;

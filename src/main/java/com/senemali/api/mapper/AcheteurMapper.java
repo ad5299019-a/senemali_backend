@@ -19,7 +19,7 @@ public class AcheteurMapper {
 
     public AcheteurResponse toResponse(Acheteurs acheteur) {
         return AcheteurResponse.builder()
-                .idAcheteur(acheteur.getIdAcheteur())
+                .idAcheteur(acheteur.getId())
                 .id(acheteur.getId())
                 .nom(acheteur.getNom())
                 .prenom(acheteur.getPrenom())

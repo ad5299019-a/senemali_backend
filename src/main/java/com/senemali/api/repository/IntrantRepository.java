@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface IntrantRepository extends JpaRepository<Intrants, Long> {
-    List<Intrants> findByFournisseur_IdFournisseur(Long idFournisseur);
+    List<Intrants> findByFournisseur_Id(Long idFournisseur);
     List<Intrants> findByDisponible(Boolean disponible);
     List<Intrants> findByStatutIntrant(StatutValidationFournisseur statut);
 }

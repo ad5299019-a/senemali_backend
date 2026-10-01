@@ -34,7 +34,7 @@ public class FinancementMapper {
                 .nomPartenaire(financement.getPartenaire() != null
                         ? financement.getPartenaire().getNomPartenaire() : null)
                 .idAdministrateur(financement.getAdministrateur() != null
-                        ? financement.getAdministrateur().getIdAdmistrateur() : null)
+                        ? financement.getAdministrateur().getId() : null)
                 .build();
     }
 }

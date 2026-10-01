@@ -28,7 +28,7 @@ public class CultureAgriculteurServiceImpl implements CultureAgriculteurService 
     @Override
     @Transactional
     public CultureAgriculteurResponse add(CultureAgriculteurRequest request) {
-        if (repository.existsByAgriculteur_IdAgriculteurAndCulture_IdCulture(
+        if (repository.existsByAgriculteur_IdAndCulture_IdCulture(
                 request.getIdAgriculteur(), request.getIdCulture())) {
             throw new RuntimeException("Association déjà existante");
         }
@@ -49,7 +49,7 @@ public class CultureAgriculteurServiceImpl implements CultureAgriculteurService 
 
     @Override
     public List<CultureAgriculteurResponse> findByAgriculteur(Long idAgriculteur) {
-        return repository.findByAgriculteur_IdAgriculteur(idAgriculteur).stream()
+        return repository.findByAgriculteur_Id(idAgriculteur).stream()
                 .map(mapper::toResponse).collect(Collectors.toList());
     }
 

@@ -11,6 +11,5 @@ public class AcheteursRequest {
     @Email @NotBlank private String email;
     @NotBlank private String telephone;
     @NotBlank private String localisation;
-    @NotBlank private String motDePasse;
     private String photoProfil;
 }

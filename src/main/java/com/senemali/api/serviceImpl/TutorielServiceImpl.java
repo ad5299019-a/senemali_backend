@@ -10,6 +10,7 @@ import com.senemali.api.mapper.TutorielMapper;
 import com.senemali.api.repository.AdministrateurRepository;
 import com.senemali.api.repository.CategorieCultureRepository;
 import com.senemali.api.repository.TutorielRepository;
+import com.senemali.api.security.AccessControl;
 import com.senemali.api.service.TutorielService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,13 +25,14 @@ public class TutorielServiceImpl implements TutorielService {
     private final CategorieCultureRepository categorieCultureRepository;
     private final AdministrateurRepository administrateurRepository;
     private final TutorielMapper mapper;
+    private final AccessControl accessControl;
 
     @Override
     @Transactional
     public TutorielResponse create(TutorielRequest request) {
         CategorieCultures categorie = categorieCultureRepository.findById(request.getIdCategorie())
                 .orElseThrow(() -> new ResourceNotFoundException("Catégorie non trouvée"));
-        Administrateurs admin = administrateurRepository.findById(request.getIdAdministrateur())
+        Administrateurs admin = administrateurRepository.findById(accessControl.currentAdminId())
                 .orElseThrow(() -> new ResourceNotFoundException("Administrateur non trouvé"));
         Tutoriels tutoriel = mapper.toEntity(request);
         tutoriel.setCategorie(categorie);

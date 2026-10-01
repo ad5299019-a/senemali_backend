@@ -11,5 +11,4 @@ public class TutorielRequest {
     @NotBlank private String urlImage;
     @NotBlank private String urlVideo;
     @NotNull private Long idCategorie;
-    @NotNull private Long idAdministrateur;
 }

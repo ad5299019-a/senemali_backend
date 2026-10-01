@@ -17,6 +17,7 @@ import java.util.List;
 public class Cultures {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_culture")
     private Long idCulture;
 
     @Column(nullable = false)

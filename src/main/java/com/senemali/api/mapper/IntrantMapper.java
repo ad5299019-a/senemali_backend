@@ -33,7 +33,7 @@ public class IntrantMapper {
                 .statutIntrant(intrant.getStatutIntrant())
                 .imageUrl(intrant.getImageUrl())
                 .idFournisseur(intrant.getFournisseur() != null
-                        ? intrant.getFournisseur().getIdFournisseur() : null)
+                        ? intrant.getFournisseur().getId() : null)
                 .nomFournisseur(intrant.getFournisseur() != null ? intrant.getFournisseur().getNom() : null)
                 .build();
     }

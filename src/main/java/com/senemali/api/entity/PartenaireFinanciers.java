@@ -19,7 +19,7 @@ import java.util.List;
 public class PartenaireFinanciers {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
+    @Column(name = "id_partenaire")
     private Long idPartenaire;
 
     @Column(nullable = false)

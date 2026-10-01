@@ -10,6 +10,6 @@ public interface FournisseurService {
     FournisseurResponse findById(Long id);
     FournisseurResponse update(Long id, FournisseurRequest request);
     void delete(Long id);
-    FournisseurResponse validerFournisseur(Long id, Long idAdmin, StatutValidationFournisseur statut);
+    FournisseurResponse validerFournisseur(Long id, StatutValidationFournisseur statut);
     List<FournisseurResponse> findByStatut(StatutValidationFournisseur statut);
 }

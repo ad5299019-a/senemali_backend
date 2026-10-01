@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,6 +39,7 @@ public class FileUploadController {
     private final FileStorageService fileStorageService;
 
     @PostMapping("/upload/{folder}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'AGRICULTEUR', 'ACHETEUR', 'FOURNISSEUR')")
     @Operation(
             summary = "Uploader une image",
             description = "Folders disponibles: profils, produits, intrants, tutoriels, services"
@@ -65,6 +67,7 @@ public class FileUploadController {
     }
 
     @DeleteMapping("/delete/{folder}/{fileName}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Supprimer un fichier uploadé")
     public ResponseEntity<Map<String, String>> deleteFile(
             @PathVariable String folder,

@@ -13,5 +13,5 @@ public interface IntrantService {
     void delete(Long id);
     List<IntrantResponse> findByFournisseur(Long idFournisseur);
     List<IntrantResponse> findDisponibles();
-    IntrantResponse validerIntrant(Long id, Long idAdmin, StatutValidationFournisseur statut);
+    IntrantResponse validerIntrant(Long id, StatutValidationFournisseur statut);
 }

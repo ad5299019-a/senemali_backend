@@ -11,7 +11,7 @@ import java.util.Map;
 
 @Component
 public class JwtUtil {
-    @Value("${jwt.secret:senemali_secret_key_very_long_and_secure_2024}")
+    @Value("${jwt.secret}")
     private String secret;
 
     @Value("${jwt.expiration:86400000}")

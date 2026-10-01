@@ -10,6 +10,7 @@ import com.senemali.api.mapper.FournisseurMapper;
 import com.senemali.api.repository.AdministrateurRepository;
 import com.senemali.api.repository.FournisseurRepository;
 import com.senemali.api.service.FournisseurService;
+import com.senemali.api.security.AccessControl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ public class FournisseurServiceImpl implements FournisseurService {
     private final FournisseurRepository fournisseurRepository;
     private final AdministrateurRepository administrateurRepository;
     private final FournisseurMapper mapper;
+    private final AccessControl accessControl;
 
     @Override
     public List<FournisseurResponse> findAll() {
@@ -52,10 +54,10 @@ public class FournisseurServiceImpl implements FournisseurService {
 
     @Override
     @Transactional
-    public FournisseurResponse validerFournisseur(Long id, Long idAdmin, StatutValidationFournisseur statut) {
+    public FournisseurResponse validerFournisseur(Long id, StatutValidationFournisseur statut) {
         Fournisseurs f = fournisseurRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Fournisseur non trouvé"));
-        Administrateurs admin = administrateurRepository.findById(idAdmin)
+        Administrateurs admin = administrateurRepository.findById(accessControl.currentAdminId())
                 .orElseThrow(() -> new ResourceNotFoundException("Administrateur non trouvé"));
         f.setStatutFournisseur(statut);
         f.setAdministrateurValidation(admin);

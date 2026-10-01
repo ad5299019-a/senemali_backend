@@ -30,13 +30,15 @@ public class UtilisateurController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or @accessControl.isCurrentUser(#id)")
     @Operation(summary = "Trouver un utilisateur par ID")
     public ResponseEntity<UtilisateurResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(utilisateurService.findById(id));
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Modifier un utilisateur")
+    @PreAuthorize("hasRole('ADMIN') or @accessControl.isCurrentUser(#id)")
+    @Operation(summary = "Modifier un utilisateur (admin ou lui-même)")
     public ResponseEntity<UtilisateurResponse> update(@PathVariable Long id, @Valid @RequestBody UtilisateurRequest request) {
         return ResponseEntity.ok(utilisateurService.update(id, request));
     }

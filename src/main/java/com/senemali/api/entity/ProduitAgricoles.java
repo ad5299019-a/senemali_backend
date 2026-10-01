@@ -20,7 +20,7 @@ public class ProduitAgricoles {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
+    @Column(name = "id_produit")
     private Long idProduit;
 
     @Column(nullable = false)
@@ -53,6 +53,6 @@ public class ProduitAgricoles {
     @OneToMany(mappedBy = "produit")
     private List<DetailCommandes> detailsCommandes;
     @ManyToOne
-    @JoinColumn(name = "id_administrateur", nullable = false)
+    @JoinColumn(name = "id_administrateur")
     private Administrateurs administrateur;
 }
