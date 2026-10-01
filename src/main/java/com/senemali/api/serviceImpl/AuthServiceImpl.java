@@ -11,10 +11,14 @@ import com.senemali.api.exception.ResourceNotFoundException;
 import com.senemali.api.mapper.UtilisateurMapper;
 import com.senemali.api.repository.*;
 import com.senemali.api.security.JwtUtil;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import com.senemali.api.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
@@ -32,12 +36,12 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponse login(AuthRequest request) {
         Utilisateurs utilisateur = utilisateursRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur non trouvé"));
+                .orElseThrow(() -> new BadCredentialsException("Identifiants incorrects"));
         if (!passwordEncoder.matches(request.getMotDePasse(), utilisateur.getMotDePasse())) {
-            throw new RuntimeException("Mot de passe incorrect");
+            throw new BadCredentialsException("Identifiants incorrects");
         }
-        if (Boolean.FALSE.equals(utilisateur.getStatut())) {
-            throw new RuntimeException("Compte désactivé");
+        if (!Boolean.TRUE.equals(utilisateur.getStatut())) {
+            throw new DisabledException("Compte désactivé");
         }
         String token = jwtUtil.generateToken(utilisateur.getEmail(), utilisateur.getRole().name());
         return AuthResponse.builder()
@@ -54,11 +58,14 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public UtilisateurResponse register(RegisterRequest request) {
+        if (request.getRole() == RoleEnum.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "La création d'un compte administrateur est interdite");
+        }
         if (utilisateursRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email déjà utilisé");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email déjà utilisé");
         }
         if (utilisateursRepository.existsByTelephone(request.getTelephone())) {
-            throw new RuntimeException("Téléphone déjà utilisé");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Téléphone déjà utilisé");
         }
         String encodedPassword = passwordEncoder.encode(request.getMotDePasse());
         if (RoleEnum.AGRICULTEUR.equals(request.getRole())) {
@@ -96,7 +103,7 @@ public class AuthServiceImpl implements AuthService {
                     .build();
             Fournisseurs saved = fournisseurRepository.save(fournisseur);
             return utilisateurMapper.toResponse(saved);
-        } else {
+        } else if (RoleEnum.ACHETEUR.equals(request.getRole())) {
             Acheteurs acheteur = Acheteurs.builder()
                     .nom(request.getNom())
                     .prenom(request.getPrenom())
@@ -112,6 +119,7 @@ public class AuthServiceImpl implements AuthService {
             Acheteurs saved = acheteurRepository.save(acheteur);
             return utilisateurMapper.toResponse(saved);
         }
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Rôle d'inscription non pris en charge");
     }
 
     @Override

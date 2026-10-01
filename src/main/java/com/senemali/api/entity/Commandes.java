@@ -20,7 +20,6 @@ import java.util.List;
 public class Commandes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long idCommande;
 
     @Column(nullable = false)

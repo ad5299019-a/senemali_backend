@@ -12,14 +12,11 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "agriculteurs")
+@PrimaryKeyJoinColumn(name = "id_agriculteur", referencedColumnName = "id")
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
 public class Agriculteurs extends Utilisateurs{
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-
-    private Long idAgriculteur;
      private String descripion;
 
     @OneToMany(mappedBy = "agriculteur",cascade = CascadeType.ALL, orphanRemoval = true)

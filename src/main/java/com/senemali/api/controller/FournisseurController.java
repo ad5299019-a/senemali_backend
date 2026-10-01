@@ -31,12 +31,14 @@ public class FournisseurController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or @accessControl.isCurrentUser(#id)")
     @Operation(summary = "Trouver un fournisseur par ID")
     public ResponseEntity<FournisseurResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(fournisseurService.findById(id));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('FOURNISSEUR') and @accessControl.isCurrentUser(#id))")
     @Operation(summary = "Modifier un fournisseur")
     public ResponseEntity<FournisseurResponse> update(@PathVariable Long id, @Valid @RequestBody FournisseurRequest request) {
         return ResponseEntity.ok(fournisseurService.update(id, request));
@@ -54,8 +56,8 @@ public class FournisseurController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Valider/Rejeter un fournisseur")
     public ResponseEntity<FournisseurResponse> valider(@PathVariable Long id,
-            @RequestParam Long idAdmin, @RequestParam StatutValidationFournisseur statut) {
-        return ResponseEntity.ok(fournisseurService.validerFournisseur(id, idAdmin, statut));
+            @RequestParam StatutValidationFournisseur statut) {
+        return ResponseEntity.ok(fournisseurService.validerFournisseur(id, statut));
     }
 
     @GetMapping("/statut/{statut}")

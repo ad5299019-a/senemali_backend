@@ -11,5 +11,4 @@ public class PrixMarcheRequest {
     @NotNull @Positive private Integer prixProduit;
     @NotBlank private String unite;
     @NotBlank private String localisation;
-    @NotNull private Long idAdministrateur;
 }

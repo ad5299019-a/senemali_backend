@@ -13,5 +13,4 @@ public class PartenaireFinancierRequest {
     private String localisation;
     private String telephone;
     private String imageUrl;
-    @NotNull private Long idAdministrateur;
 }

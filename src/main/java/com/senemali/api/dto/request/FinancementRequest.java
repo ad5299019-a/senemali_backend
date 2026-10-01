@@ -13,5 +13,4 @@ public class FinancementRequest {
     @NotNull @Positive private Integer montantMax;
     @NotNull private Boolean disponible;
     @NotNull private Long idPartenaire;
-    @NotNull private Long idAdministrateur;
 }

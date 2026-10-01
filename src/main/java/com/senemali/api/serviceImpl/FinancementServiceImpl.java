@@ -10,6 +10,7 @@ import com.senemali.api.mapper.FinancementMapper;
 import com.senemali.api.repository.AdministrateurRepository;
 import com.senemali.api.repository.FinancementRepository;
 import com.senemali.api.repository.PartenaireFinancierRepository;
+import com.senemali.api.security.AccessControl;
 import com.senemali.api.service.FinancementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,13 +25,14 @@ public class FinancementServiceImpl implements FinancementService {
     private final PartenaireFinancierRepository partenaireRepository;
     private final AdministrateurRepository administrateurRepository;
     private final FinancementMapper mapper;
+    private final AccessControl accessControl;
 
     @Override
     @Transactional
     public FinancementResponse create(FinancementRequest request) {
         PartenaireFinanciers partenaire = partenaireRepository.findById(request.getIdPartenaire())
                 .orElseThrow(() -> new ResourceNotFoundException("Partenaire non trouvé"));
-        Administrateurs admin = administrateurRepository.findById(request.getIdAdministrateur())
+        Administrateurs admin = administrateurRepository.findById(accessControl.currentAdminId())
                 .orElseThrow(() -> new ResourceNotFoundException("Administrateur non trouvé"));
         Financements financement = mapper.toEntity(request);
         financement.setPartenaire(partenaire);

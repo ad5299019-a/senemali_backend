@@ -10,6 +10,7 @@ import com.senemali.api.mapper.ServiceAgricoleMapper;
 import com.senemali.api.repository.AdministrateurRepository;
 import com.senemali.api.repository.PrestatireRepository;
 import com.senemali.api.repository.ServiceAgricoleRepository;
+import com.senemali.api.security.AccessControl;
 import com.senemali.api.service.ServiceAgricoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,13 +25,14 @@ public class ServiceAgricoleServiceImpl implements ServiceAgricoleService {
     private final PrestatireRepository prestatireRepository;
     private final AdministrateurRepository administrateurRepository;
     private final ServiceAgricoleMapper mapper;
+    private final AccessControl accessControl;
 
     @Override
     @Transactional
     public ServiceAgricoleResponse create(ServiceAgricoleRequest request) {
         Prestataires prestataire = prestatireRepository.findById(request.getIdPrestataire())
                 .orElseThrow(() -> new ResourceNotFoundException("Prestataire non trouvé"));
-        Administrateurs admin = administrateurRepository.findById(request.getIdAdministrateur())
+        Administrateurs admin = administrateurRepository.findById(accessControl.currentAdminId())
                 .orElseThrow(() -> new ResourceNotFoundException("Administrateur non trouvé"));
         ServiceAgricoles service = mapper.toEntity(request);
         service.setPrestataire(prestataire);

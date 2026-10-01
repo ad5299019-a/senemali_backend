@@ -10,6 +10,7 @@ import com.senemali.api.mapper.ConseilMapper;
 import com.senemali.api.repository.AdministrateurRepository;
 import com.senemali.api.repository.ConseilRepository;
 import com.senemali.api.repository.CultureRepository;
+import com.senemali.api.security.AccessControl;
 import com.senemali.api.service.ConseilService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,13 +26,14 @@ public class ConseilServiceImpl implements ConseilService {
     private final CultureRepository cultureRepository;
     private final AdministrateurRepository administrateurRepository;
     private final ConseilMapper mapper;
+    private final AccessControl accessControl;
 
     @Override
     @Transactional
     public ConseilResponse create(ConseilRequest request) {
         Cultures culture = cultureRepository.findById(request.getIdCulture())
                 .orElseThrow(() -> new ResourceNotFoundException("Culture non trouvée"));
-        Administrateurs admin = administrateurRepository.findById(request.getIdAdministrateur())
+        Administrateurs admin = administrateurRepository.findById(accessControl.currentAdminId())
                 .orElseThrow(() -> new ResourceNotFoundException("Administrateur non trouvé"));
         Conseils conseil = mapper.toEntity(request);
         conseil.setDatePub(LocalDate.now());

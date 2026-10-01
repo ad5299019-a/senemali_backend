@@ -24,7 +24,7 @@ public class ProduitAgricoleController {
     private final ProduitAgricoleService produitService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('AGRICULTEUR', 'ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('AGRICULTEUR') and @accessControl.isCurrentAgriculteur(#request.idAgriculteur))")
     @Operation(summary = "Ajouter un produit")
     public ResponseEntity<ProduitAgricoleResponse> create(@Valid @RequestBody ProduitAgricoleRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(produitService.create(request));
@@ -61,14 +61,14 @@ public class ProduitAgricoleController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('AGRICULTEUR', 'ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('AGRICULTEUR') and @accessControl.isProductOwner(#id))")
     @Operation(summary = "Modifier un produit")
     public ResponseEntity<ProduitAgricoleResponse> update(@PathVariable Long id, @Valid @RequestBody ProduitAgricoleRequest request) {
         return ResponseEntity.ok(produitService.update(id, request));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('AGRICULTEUR', 'ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('AGRICULTEUR') and @accessControl.isProductOwner(#id))")
     @Operation(summary = "Supprimer un produit")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         produitService.delete(id);

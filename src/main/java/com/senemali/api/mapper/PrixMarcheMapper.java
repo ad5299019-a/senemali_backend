@@ -29,7 +29,7 @@ public class PrixMarcheMapper {
                 .localisation(prix.getLocalisation())
                 .dateObserv(prix.getDateObserv())
                 .idAdministrateur(prix.getAdministrateur() != null
-                        ? prix.getAdministrateur().getIdAdmistrateur() : null)
+                        ? prix.getAdministrateur().getId() : null)
                 .build();
     }
 }

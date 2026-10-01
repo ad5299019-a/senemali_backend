@@ -25,6 +25,7 @@ public class CommandeController {
     private final CommandeService commandeService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ACHETEUR') and @accessControl.isCurrentUser(#request.idUtilisateur)")
     @Operation(summary = "Passer une commande")
     public ResponseEntity<CommandeResponse> create(@Valid @RequestBody CommandeRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(commandeService.create(request));
@@ -38,12 +39,14 @@ public class CommandeController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or @accessControl.isCommandeOwner(#id)")
     @Operation(summary = "Trouver une commande par ID")
     public ResponseEntity<CommandeResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(commandeService.findById(id));
     }
 
     @GetMapping("/utilisateur/{idUtilisateur}")
+    @PreAuthorize("hasRole('ADMIN') or @accessControl.isCurrentUser(#idUtilisateur)")
     @Operation(summary = "Lister les commandes d'un utilisateur")
     public ResponseEntity<List<CommandeResponse>> findByUtilisateur(@PathVariable Long idUtilisateur) {
         return ResponseEntity.ok(commandeService.findByUtilisateur(idUtilisateur));

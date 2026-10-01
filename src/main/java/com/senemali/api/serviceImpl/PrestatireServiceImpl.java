@@ -10,6 +10,7 @@ import com.senemali.api.exception.ResourceNotFoundException;
 import com.senemali.api.mapper.PrestatireMapper;
 import com.senemali.api.repository.AdministrateurRepository;
 import com.senemali.api.repository.PrestatireRepository;
+import com.senemali.api.security.AccessControl;
 import com.senemali.api.service.PrestatireService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,11 +24,12 @@ public class PrestatireServiceImpl implements PrestatireService {
     private final PrestatireRepository prestatireRepository;
     private final AdministrateurRepository administrateurRepository;
     private final PrestatireMapper mapper;
+    private final AccessControl accessControl;
 
     @Override
     @Transactional
     public PrestatireResponse create(PrestatireRequest request) {
-        Administrateurs admin = administrateurRepository.findById(request.getIdAdministrateur())
+        Administrateurs admin = administrateurRepository.findById(accessControl.currentAdminId())
                 .orElseThrow(() -> new ResourceNotFoundException("Administrateur non trouvé"));
         Prestataires prestataire = mapper.toEntity(request);
         prestataire.setAdministrateur(admin);

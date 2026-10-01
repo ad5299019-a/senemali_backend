@@ -12,5 +12,4 @@ public class ServiceAgricoleRequest {
     private String imageUrl;
     @NotNull private Boolean disponible;
     @NotNull private Long idPrestataire;
-    @NotNull private Long idAdministrateur;
 }

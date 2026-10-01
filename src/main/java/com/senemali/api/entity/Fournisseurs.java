@@ -13,14 +13,11 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "fournisseurs")
+@PrimaryKeyJoinColumn(name = "id_fournisseur", referencedColumnName = "id")
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
 public class Fournisseurs extends Utilisateurs{
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-
-    private  Long idFournisseur;
     private  String description;
     private  String nomEntrepise;
     private  String zoneDeVente;

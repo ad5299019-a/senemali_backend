@@ -7,7 +7,7 @@ import java.util.List;
 
 @Repository
 public interface ProduitAgricoleRepository extends JpaRepository<ProduitAgricoles, Long> {
-    List<ProduitAgricoles> findByAgriculteur_IdAgriculteur(Long idAgriculteur);
+    List<ProduitAgricoles> findByAgriculteur_Id(Long idAgriculteur);
     List<ProduitAgricoles> findByDisponible(Boolean disponible);
     List<ProduitAgricoles> findByNomProduitContainingIgnoreCase(String nomProduit);
 }

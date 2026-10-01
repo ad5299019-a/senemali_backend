@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "commandes")
+@Table(name = "detail_commandes")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -42,5 +42,4 @@ public class DetailCommandes {
     @ManyToOne
     @JoinColumn(name = "id_intrant")
     private Intrants intrant;
-
 }

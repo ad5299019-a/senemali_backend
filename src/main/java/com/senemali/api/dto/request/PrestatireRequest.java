@@ -14,5 +14,4 @@ public class PrestatireRequest {
     @NotBlank private String telephone;
     @NotBlank private String localisation;
     private String imageUrl;
-    @NotNull private Long idAdministrateur;
 }

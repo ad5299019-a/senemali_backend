@@ -35,13 +35,15 @@ public class AcheteurController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or @accessControl.isCurrentUser(#id)")
     @Operation(summary = "Trouver un acheteur par ID")
     public ResponseEntity<AcheteurResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(acheteurService.findById(id));
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Modifier un acheteur")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('ACHETEUR') and @accessControl.isCurrentUser(#id))")
+    @Operation(summary = "Modifier un acheteur (admin ou acheteur lui-même)")
     public ResponseEntity<AcheteurResponse> update(@PathVariable Long id,
                                                    @Valid @RequestBody AcheteursRequest request) {
         return ResponseEntity.ok(acheteurService.update(id, request));

@@ -17,7 +17,7 @@ import java.util.List;
 public class CategorieCultures {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
+    @Column(name = "id_categorie")
     private Long idCategorie;
 
     @Column(nullable = false)

@@ -12,6 +12,7 @@ import com.senemali.api.repository.AdministrateurRepository;
 import com.senemali.api.repository.FournisseurRepository;
 import com.senemali.api.repository.IntrantRepository;
 import com.senemali.api.service.IntrantService;
+import com.senemali.api.security.AccessControl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ public class IntrantServiceImpl implements IntrantService {
     private final FournisseurRepository fournisseurRepository;
     private final AdministrateurRepository administrateurRepository;
     private final IntrantMapper mapper;
+    private final AccessControl accessControl;
 
     @Override
     @Transactional
@@ -66,7 +68,7 @@ public class IntrantServiceImpl implements IntrantService {
 
     @Override
     public List<IntrantResponse> findByFournisseur(Long idFournisseur) {
-        return intrantRepository.findByFournisseur_IdFournisseur(idFournisseur).stream()
+        return intrantRepository.findByFournisseur_Id(idFournisseur).stream()
                 .map(mapper::toResponse).collect(Collectors.toList());
     }
 
@@ -78,10 +80,10 @@ public class IntrantServiceImpl implements IntrantService {
 
     @Override
     @Transactional
-    public IntrantResponse validerIntrant(Long id, Long idAdmin, StatutValidationFournisseur statut) {
+    public IntrantResponse validerIntrant(Long id, StatutValidationFournisseur statut) {
         Intrants intrant = intrantRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Intrant non trouvé"));
-        Administrateurs admin = administrateurRepository.findById(idAdmin)
+        Administrateurs admin = administrateurRepository.findById(accessControl.currentAdminId())
                 .orElseThrow(() -> new ResourceNotFoundException("Administrateur non trouvé"));
         intrant.setStatutIntrant(statut);
         intrant.setAdministrateurValidation(admin);

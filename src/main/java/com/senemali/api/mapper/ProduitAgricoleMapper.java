@@ -35,7 +35,7 @@ public class ProduitAgricoleMapper {
                 .imageUrl(produit.getImageUrl())
                 .datePub(produit.getDatePub())
                 .idAgriculteur(produit.getAgriculteur() != null
-                        ? produit.getAgriculteur().getIdAgriculteur() : null)
+                        ? produit.getAgriculteur().getId() : null)
                 .nomAgriculteur(produit.getAgriculteur() != null
                         ? produit.getAgriculteur().getNom() + " " + produit.getAgriculteur().getPrenom() : null)
                 .build();

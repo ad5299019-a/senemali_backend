@@ -10,7 +10,6 @@ public class DetailCommandeMapper {
     public DetailCommandes toEntity(DetailCommandeRequest request) {
         DetailCommandes detail = new DetailCommandes();
         detail.setQuantite(request.getQuantite());
-        detail.setPrixUnitaire(request.getPrixUnitaire());
         return detail;
     }
 

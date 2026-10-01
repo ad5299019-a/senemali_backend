@@ -9,5 +9,4 @@ public class ConseilRequest {
     @NotBlank private String titreConseil;
     @NotBlank private String contenu;
     @NotNull private Long idCulture;
-    @NotNull private Long idAdministrateur;
 }

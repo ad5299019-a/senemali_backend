@@ -5,7 +5,6 @@ import com.senemali.api.security.JwtAuthEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -21,11 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 /**
  * Configuration de la sécurité Spring Security.
  *
- * Routes publiques (pas de JWT requis) :
- *  - Auth : /api/auth/**
- *  - Swagger : /swagger-ui/**, /v3/api-docs/**
- *  - Lecture publique : produits, conseils, tutoriels, prix marché, catégories
- *  - Upload statiques : /uploads/**
+ * Seules l'inscription, la connexion et la documentation sont publiques.
  *
  * Toutes les autres routes nécessitent un JWT valide.
  * Les autorisations par rôle sont gérées via @PreAuthorize dans les controllers.
@@ -39,23 +34,10 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final JwtAuthEntryPoint jwtAuthEntryPoint;
 
-    /** Routes accessibles sans authentification (GET public) */
-    private static final String[] PUBLIC_GET_URLS = {
-            "/api/produits/**",
-            "/api/intrants/disponibles",
-            "/api/conseils/**",
-            "/api/tutoriels/**",
-            "/api/prix-marche/**",
-            "/api/categories-cultures/**",
-            "/api/cultures/**",
-            "/api/partenaires/**",
-            "/api/services/disponibles",
-            "/uploads/**"
-    };
-
-    /** Routes complètement publiques (toutes méthodes) */
+    /** Routes publiques sans authentification */
     private static final String[] PUBLIC_URLS = {
-            "/api/auth/**",
+            "/api/auth/login",
+            "/api/auth/register",
             "/swagger-ui/**",
             "/swagger-ui.html",
             "/v3/api-docs/**",
@@ -74,9 +56,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Routes complètement publiques
                         .requestMatchers(PUBLIC_URLS).permitAll()
-                        // Routes en lecture publique
-                        .requestMatchers(HttpMethod.GET, PUBLIC_GET_URLS).permitAll()
-                        // Toute autre requête nécessite une authentification
+                        // Toute autre requête API nécessite un JWT valide
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

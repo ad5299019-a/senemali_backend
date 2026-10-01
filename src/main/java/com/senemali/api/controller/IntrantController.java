@@ -25,7 +25,7 @@ public class IntrantController {
     private final IntrantService intrantService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('FOURNISSEUR', 'ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('FOURNISSEUR') and @accessControl.isCurrentFournisseur(#request.idFournisseur))")
     @Operation(summary = "Ajouter un intrant")
     public ResponseEntity<IntrantResponse> create(@Valid @RequestBody IntrantRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(intrantService.create(request));
@@ -56,14 +56,14 @@ public class IntrantController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('FOURNISSEUR', 'ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('FOURNISSEUR') and @accessControl.isIntrantOwner(#id))")
     @Operation(summary = "Modifier un intrant")
     public ResponseEntity<IntrantResponse> update(@PathVariable Long id, @Valid @RequestBody IntrantRequest request) {
         return ResponseEntity.ok(intrantService.update(id, request));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('FOURNISSEUR', 'ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('FOURNISSEUR') and @accessControl.isIntrantOwner(#id))")
     @Operation(summary = "Supprimer un intrant")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         intrantService.delete(id);
@@ -74,7 +74,7 @@ public class IntrantController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Valider un intrant")
     public ResponseEntity<IntrantResponse> valider(@PathVariable Long id,
-            @RequestParam Long idAdmin, @RequestParam StatutValidationFournisseur statut) {
-        return ResponseEntity.ok(intrantService.validerIntrant(id, idAdmin, statut));
+            @RequestParam StatutValidationFournisseur statut) {
+        return ResponseEntity.ok(intrantService.validerIntrant(id, statut));
     }
 }

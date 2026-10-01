@@ -18,7 +18,7 @@ public class AgriculteurMapper {
 
     public AgriculteurResponse toResponse(Agriculteurs agriculteur) {
         return AgriculteurResponse.builder()
-                .idAgriculteur(agriculteur.getIdAgriculteur())
+                .idAgriculteur(agriculteur.getId())
                 .id(agriculteur.getId())
                 .nom(agriculteur.getNom())
                 .prenom(agriculteur.getPrenom())

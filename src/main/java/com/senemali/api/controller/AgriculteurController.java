@@ -29,13 +29,15 @@ public class AgriculteurController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or @accessControl.isCurrentUser(#id)")
     @Operation(summary = "Trouver un agriculteur par ID")
     public ResponseEntity<AgriculteurResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(agriculteurService.findById(id));
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Modifier un agriculteur")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('AGRICULTEUR') and @accessControl.isCurrentUser(#id))")
+    @Operation(summary = "Modifier un agriculteur (admin ou agriculteur lui-même)")
     public ResponseEntity<AgriculteurResponse> update(@PathVariable Long id, @Valid @RequestBody AgriculteurRequest request) {
         return ResponseEntity.ok(agriculteurService.update(id, request));
     }

@@ -20,7 +20,7 @@ public class FournisseurMapper {
 
     public FournisseurResponse toResponse(Fournisseurs fournisseur) {
         return FournisseurResponse.builder()
-                .idFournisseur(fournisseur.getIdFournisseur())
+                .idFournisseur(fournisseur.getId())
                 .id(fournisseur.getId())
                 .nom(fournisseur.getNom())
                 .prenom(fournisseur.getPrenom())
