@@ -11,11 +11,11 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Configuration CORS pour permettre les requêtes depuis :
- * - Angular Web (localhost:4200)
- * - Flutter Web (localhost:4300)
- * - Applications mobiles Flutter (via HTTP client)
- */
+   -Configuration CORS pour permettre les requêtes depuis :
+   - Angular Web (localhost:4200)
+   - Flutter Web (localhost:4300)
+   - Applications mobiles Flutter (via HTTP client)
+ **/
 @Configuration
 public class CorsConfig {
 

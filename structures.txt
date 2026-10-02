@@ -202,7 +202,9 @@ config/DataInitializer.java
     valeurs fortes hors du code source, surtout en production.
 
 dto/request/AuthRequest.java
-    Corps JSON de connexion : email et motDePasse.
+    Corps JSON de connexion : identifiant et motDePasse. L'identifiant est
+    l'email pour ADMIN ; AGRICULTEUR, ACHETEUR et FOURNISSEUR peuvent utiliser
+    leur email ou leur numero de telephone.
 
 dto/response/AuthResponse.java
     Donnees retournees apres une connexion reussie : token, type Bearer,
@@ -216,7 +218,11 @@ reponse/ApiResponse.java, reponse/GlobalResponseAdvice.java
 
 Parcours de connexion et d'une requete protegee
     1. Le client envoie POST /api/auth/login avec un JSON comme :
-       {"email":"acheteur@example.ml","motDePasse":"mot-de-passe"}.
+       {"identifiant":"+22370000000","motDePasse":"mot-de-passe"} ou
+       {"identifiant":"acheteur@example.ml","motDePasse":"mot-de-passe"} pour
+       un agriculteur, acheteur ou fournisseur, ou
+       {"identifiant":"admin@example.ml","motDePasse":"mot-de-passe"} pour
+       un administrateur.
     2. AuthController transmet la demande a AuthServiceImpl.
     3. Le service retrouve l'utilisateur, compare le mot de passe fourni a
        son hash BCrypt et verifie l'etat du compte.
