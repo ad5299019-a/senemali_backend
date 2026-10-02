@@ -13,6 +13,7 @@ public class CultureResponse {
     private Long idCulture;
     private String nomCulture;
     private String description;
+    private String imageUrl;
     private Long idCategorie;
     private String nomCategorie;
 }

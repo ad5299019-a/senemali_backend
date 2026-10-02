@@ -16,6 +16,7 @@ public class CultureMapper {
     public void updateEntity(CultureRequest request, Cultures culture) {
         culture.setNomCulture(request.getNomCulture());
         culture.setDescription(request.getDescription());
+        culture.setImageUrl(request.getImageUrl());
     }
 
     public CultureResponse toResponse(Cultures culture) {
@@ -23,6 +24,7 @@ public class CultureMapper {
                 .idCulture(culture.getIdCulture())
                 .nomCulture(culture.getNomCulture())
                 .description(culture.getDescription())
+                .imageUrl(culture.getImageUrl())
                 .idCategorie(culture.getCategorie() != null ? culture.getCategorie().getIdCategorie() : null)
                 .nomCategorie(culture.getCategorie() != null ? culture.getCategorie().getNomCategorie() : null)
                 .build();

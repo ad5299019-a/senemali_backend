@@ -8,5 +8,6 @@ import lombok.Data;
 public class CultureRequest {
     @NotBlank private String nomCulture;
     private String description;
+    private String imageUrl;
     @NotNull private Long idCategorie;
 }

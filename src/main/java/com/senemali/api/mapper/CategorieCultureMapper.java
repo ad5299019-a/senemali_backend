@@ -27,6 +27,7 @@ public class CategorieCultureMapper {
                         .idCulture(culture.getIdCulture())
                         .nomCulture(culture.getNomCulture())
                         .description(culture.getDescription())
+                        .imageUrl(culture.getImageUrl())
                         .idCategorie(categorie.getIdCategorie())
                         .nomCategorie(categorie.getNomCategorie())
                         .build())

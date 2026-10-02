@@ -53,7 +53,7 @@ public class AuthController {
     @PostMapping("/register")
     @Operation(
             summary = "S'inscrire",
-            description = "Créer un compte. Role possible : AGRICULTEUR, ACHETEUR, FOURNISSEUR"
+            description = "Créer un compte. Rôles possibles : AGRICULTEUR, ACHETEUR, FOURNISSEUR. Un fournisseur reste désactivé jusqu'à validation par un administrateur."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Compte créé avec succès"),

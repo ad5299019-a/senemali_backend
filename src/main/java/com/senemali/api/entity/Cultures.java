@@ -23,7 +23,9 @@ public class Cultures {
     @Column(nullable = false)
     private String nomCulture;
 
-    private  String description;
+    private String description;
+
+    private String imageUrl;
 
     @ManyToOne
     @JoinColumn(name = "id_categorie",nullable = false)

@@ -30,7 +30,7 @@ VALUES
     (3003, 'Fanta', 'Cisse', 'agriculteur3@senemali.ml', '+22370003003', 'Koutiala', '$2a$12$.//P5agyGrONjOYPid/lbeTCh9D5U9i2pVCjG0NEAuG/wavHH2NxO', NULL, 'AGRICULTEUR', 1, '2026-01-13 09:00:00'),
     (4001, 'Sekou', 'Maiga', 'fournisseur1@senemali.ml', '+22370004001', 'Bamako', '$2a$12$.//P5agyGrONjOYPid/lbeTCh9D5U9i2pVCjG0NEAuG/wavHH2NxO', NULL, 'FOURNISSEUR', 1, '2026-01-14 09:00:00'),
     (4002, 'Hawa', 'Berthe', 'fournisseur2@senemali.ml', '+22370004002', 'Sikasso', '$2a$12$.//P5agyGrONjOYPid/lbeTCh9D5U9i2pVCjG0NEAuG/wavHH2NxO', NULL, 'FOURNISSEUR', 1, '2026-01-15 09:00:00'),
-    (4003, 'Modibo', 'Sissoko', 'fournisseur3@senemali.ml', '+22370004003', 'Kayes', '$2a$12$.//P5agyGrONjOYPid/lbeTCh9D5U9i2pVCjG0NEAuG/wavHH2NxO', NULL, 'FOURNISSEUR', 1, '2026-01-16 09:00:00');
+    (4003, 'Modibo', 'Sissoko', 'fournisseur3@senemali.ml', '+22370004003', 'Kayes', '$2a$12$.//P5agyGrONjOYPid/lbeTCh9D5U9i2pVCjG0NEAuG/wavHH2NxO', NULL, 'FOURNISSEUR', 0, '2026-01-16 09:00:00');
 
 -- 2. Categories, puis tables specialisees des utilisateurs (heritage JOINED)
 INSERT INTO `Categorie_Cultures` (id_categorie, nom_categorie, description)
@@ -66,11 +66,11 @@ VALUES
     (2, 'Techni Champ', 'TECHNICIEN_AGRICOLE', 'Maintenance de materiel', 'Mecanique agricole', '+22371001002', 'Sikasso', NULL, 1002),
     (3, 'Agro Conseil Segou', 'CONSEILLER_AGRICOLE', 'Conseil aux producteurs', 'Irrigation', '+22371001003', 'Segou', NULL, 1003);
 
-INSERT INTO cultures (id_culture, nom_culture, description, id_categorie)
+INSERT INTO cultures (id_culture, nom_culture, description, image_url, id_categorie)
 VALUES
-    (1, 'Mil', 'Culture adaptee aux zones seches', 1),
-    (2, 'Mais', 'Culture cerealieres de saison des pluies', 1),
-    (3, 'Niebe', 'Legumineuse a cycle court', 2);
+    (1, 'Mil', 'Culture adaptee aux zones seches', NULL, 1),
+    (2, 'Mais', 'Culture cerealieres de saison des pluies', NULL, 1),
+    (3, 'Niebe', 'Legumineuse a cycle court', NULL, 2);
 
 INSERT INTO commandes (id_commande, date_commande, status, montant_total, id_utilisateur)
 VALUES

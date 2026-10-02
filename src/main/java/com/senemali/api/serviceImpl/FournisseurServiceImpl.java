@@ -60,6 +60,7 @@ public class FournisseurServiceImpl implements FournisseurService {
         Administrateurs admin = administrateurRepository.findById(accessControl.currentAdminId())
                 .orElseThrow(() -> new ResourceNotFoundException("Administrateur non trouvé"));
         f.setStatutFournisseur(statut);
+        f.setStatut(statut == StatutValidationFournisseur.VALIDE);
         f.setAdministrateurValidation(admin);
         return mapper.toResponse(fournisseurRepository.save(f));
     }
