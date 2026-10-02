@@ -8,6 +8,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -37,6 +38,29 @@ class SenemaliApiApplicationTests {
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.status").value(403));
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void adminsCannotCreateOrders() throws Exception {
+        mockMvc.perform(post("/api/commandes")
+                        .contentType("application/json")
+                        .content("{\"details\":[{\"idProduit\":1,\"quantite\":1}]}"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "ACHETEUR")
+    void onlyAdminsAndFarmersCanListFinancialPartners() throws Exception {
+        mockMvc.perform(get("/api/partenaires"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "ACHETEUR")
+    void onlyAdminsAndFarmersCanListProviders() throws Exception {
+        mockMvc.perform(get("/api/prestataires"))
+                .andExpect(status().isForbidden());
     }
 
     @Test

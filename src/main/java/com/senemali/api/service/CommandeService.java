@@ -9,7 +9,7 @@ public interface CommandeService {
     CommandeResponse create(CommandeRequest request);
     List<CommandeResponse> findAll();
     CommandeResponse findById(Long id);
-    void delete(Long id);
+    List<CommandeResponse> findMine();
     List<CommandeResponse> findByUtilisateur(Long idUtilisateur);
     CommandeResponse updateStatut(Long id, StatutCommandeEnum statut);
 }

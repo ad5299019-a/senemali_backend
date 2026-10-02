@@ -108,6 +108,24 @@ par le service avec les repositories. Les valeurs calculees ou gerees par
 l'application (par exemple un statut initial, une date ou un montant) restent
 de la responsabilite du service.
 
+Commandes : deux parcours distincts
+Un ACHETEUR cree une commande de produits agricoles appartenant a un
+agriculteur. Un AGRICULTEUR cree une commande d'intrants appartenant a un
+fournisseur valide. Une commande ne melange pas produits et intrants et
+ne peut contenir que des lignes provenant d'un seul vendeur.
+
+Le client envoie POST /api/commandes avec les details (idProduit ou
+idIntrant et quantite). Il ne fournit pas l'id de l'acheteur/agriculteur :
+le backend identifie le client a partir du JWT. Le prix et le montant total
+sont calcules par le serveur.
+
+ADMIN peut consulter toutes les commandes via GET /api/commandes et les
+details par GET /api/commandes/{id}, mais ne cree pas, ne modifie pas le
+statut et ne supprime pas les commandes. Les acheteurs, agriculteurs et
+fournisseurs consultent leurs commandes/interventions avec
+GET /api/commandes/mes-commandes. Un client peut annuler sa commande en
+cours ; seul le vendeur concerne peut la marquer LIVREE.
+
 4. RESSOURCES
 --------------
 

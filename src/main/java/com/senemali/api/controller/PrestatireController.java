@@ -32,18 +32,21 @@ public class PrestatireController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'AGRICULTEUR')")
     @Operation(summary = "Lister tous les prestataires")
     public ResponseEntity<List<PrestatireResponse>> findAll() {
         return ResponseEntity.ok(prestatireService.findAll());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'AGRICULTEUR')")
     @Operation(summary = "Trouver un prestataire par ID")
     public ResponseEntity<PrestatireResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(prestatireService.findById(id));
     }
 
     @GetMapping("/type/{type}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'AGRICULTEUR')")
     @Operation(summary = "Lister par type")
     public ResponseEntity<List<PrestatireResponse>> findByType(@PathVariable TypePrestataireEnum type) {
         return ResponseEntity.ok(prestatireService.findByType(type));

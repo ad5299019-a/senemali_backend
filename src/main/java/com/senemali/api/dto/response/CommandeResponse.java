@@ -19,5 +19,8 @@ public class CommandeResponse {
     private int montantTotal;
     private Long idUtilisateur;
     private String nomUtilisateur;
+    private Long idVendeur;
+    private String nomVendeur;
+    private String roleVendeur;
     private List<DetailCommandeResponse> details;
 }

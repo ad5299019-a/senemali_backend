@@ -8,6 +8,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -56,6 +57,22 @@ public class AccessControl {
         return currentUser().flatMap(user -> commandeRepository.findById(id)
                 .map(commande -> commande.getUtilisateur().getId().equals(user.getId())))
                 .orElse(false);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isCommandeParticipant(Long id) {
+        return currentUser().flatMap(user -> commandeRepository.findById(id)
+                .map(commande -> commande.getUtilisateur().getId().equals(user.getId())
+                        || commande.getDetailCommandes().stream().anyMatch(detail ->
+                        detail.getProduit() != null
+                                && detail.getProduit().getAgriculteur().getId().equals(user.getId())
+                                || detail.getIntrant() != null
+                                && detail.getIntrant().getFournisseur().getId().equals(user.getId()))))
+                .orElse(false);
+    }
+
+    public Utilisateurs requireCurrentUser() {
+        return currentUser().orElseThrow(() -> new AccessDeniedException("Utilisateur authentifié requis"));
     }
 
     public boolean isNotificationOwner(Long id) {
