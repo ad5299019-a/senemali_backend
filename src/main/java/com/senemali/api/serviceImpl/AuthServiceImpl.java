@@ -43,6 +43,10 @@ public class AuthServiceImpl implements AuthService {
         if (!Boolean.TRUE.equals(utilisateur.getStatut())) {
             throw new DisabledException("Compte désactivé");
         }
+        if (utilisateur instanceof Fournisseurs fournisseur
+                && fournisseur.getStatutFournisseur() != StatutValidationFournisseur.VALIDE) {
+            throw new DisabledException("Compte fournisseur en attente de validation");
+        }
         String token = jwtUtil.generateToken(utilisateur.getEmail(), utilisateur.getRole().name());
         return AuthResponse.builder()
                 .token(token)
@@ -94,7 +98,7 @@ public class AuthServiceImpl implements AuthService {
                     .motDePasse(encodedPassword)
                     .photoProfil(request.getPhotoProfil())
                     .role(RoleEnum.FOURNISSEUR)
-                    .statut(true)
+                    .statut(false)
                     .dateCreation(LocalDateTime.now())
                     .description(request.getDescriptionFournisseur())
                     .nomEntrepise(request.getNomEntreprise())

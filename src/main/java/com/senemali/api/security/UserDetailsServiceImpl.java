@@ -1,6 +1,8 @@
 package com.senemali.api.security;
 
 import com.senemali.api.entity.Utilisateurs;
+import com.senemali.api.entity.Fournisseurs;
+import com.senemali.api.enums.StatutValidationFournisseur;
 import com.senemali.api.repository.UtilisateursRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -25,7 +27,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .password(utilisateur.getMotDePasse())
                 .authorities(Collections.singletonList(
                         new SimpleGrantedAuthority("ROLE_" + utilisateur.getRole().name())))
-                .disabled(!Boolean.TRUE.equals(utilisateur.getStatut()))
+                .disabled(!Boolean.TRUE.equals(utilisateur.getStatut())
+                        || utilisateur instanceof Fournisseurs fournisseur
+                        && fournisseur.getStatutFournisseur() != StatutValidationFournisseur.VALIDE)
                 .build();
     }
 }

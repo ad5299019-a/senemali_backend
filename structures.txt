@@ -139,3 +139,117 @@ src/test/java/com/senemali/api/
 - Lombok pour reduire le code repetitif
 - Springdoc OpenAPI pour la documentation de l'API
 - Maven pour la gestion des dependances, la compilation et les tests
+
+6. AUTHENTIFICATION ET SECURITE JWT
+-----------------------------------
+
+Principe general
+    Angular, Flutter ou Swagger envoie des requetes HTTP a l'API. Le client
+    s'authentifie une fois avec son email et son mot de passe. L'API retourne
+    un JWT que le client doit ensuite joindre aux requetes protegees.
+    L'application est stateless : le serveur ne conserve pas de session
+    utilisateur ; chaque requete protegee doit contenir le JWT.
+
+Fichiers principaux
+
+config/SecurityConfig.java
+    Configure Spring Security, BCrypt, CORS et les routes publiques. Les
+    routes login, inscription, Swagger et health sont publiques ; toute autre
+    route requiert un utilisateur authentifie. Active aussi les verifications
+    de methodes @PreAuthorize et insere JwtAuthFilter dans la chaine HTTP.
+
+security/JwtAuthFilter.java
+    Examine l'en-tete HTTP Authorization. Si sa valeur commence par
+    "Bearer ", extrait le JWT, le valide avec JwtUtil, recharge l'utilisateur
+    avec UserDetailsServiceImpl et place son authentification dans le
+    SecurityContext pour la requete en cours.
+
+security/JwtUtil.java
+    Cree, signe, lit et valide les JWT. Le sujet du token est l'email ; le
+    token contient aussi le role et ses dates d'emission et d'expiration.
+    La cle de signature et la duree de validite viennent des proprietes
+    jwt.secret et jwt.expiration. Un JWT est signe, mais son contenu n'est
+    pas chiffre : ne pas y placer de mot de passe ou de secret.
+
+security/UserDetailsServiceImpl.java
+    Recherche l'utilisateur par email et fournit a Spring Security son hash
+    de mot de passe et son autorite ROLE_<role>. Un compte inactif est
+    desactive ; un fournisseur doit aussi avoir le statut VALIDE.
+
+security/JwtAuthEntryPoint.java
+    Retourne une reponse JSON HTTP 401 quand une requete protegee ne presente
+    pas une authentification valide.
+
+security/AccessControl.java
+    Fournit des verifications utilisees par @PreAuthorize pour verifier
+    l'utilisateur courant, son role et la propriete d'une ressource
+    (commande, produit, intrant, notification ou association de culture).
+
+controller/AuthController.java
+    Expose les routes d'authentification : POST /api/auth/login,
+    POST /api/auth/register et GET /api/auth/me.
+
+serviceImpl/AuthServiceImpl.java
+    Effectue la connexion, compare le mot de passe avec son hash BCrypt,
+    verifie que le compte est actif et que le fournisseur est valide, puis
+    demande a JwtUtil de creer le token. A l'inscription, encode le mot de
+    passe avant de l'enregistrer. La creation publique d'un ADMIN est refusee.
+
+config/DataInitializer.java
+    Initialise le compte administrateur de bootstrap selon la configuration
+    et desactive les fournisseurs en attente ou refuses qui seraient actifs.
+    Les identifiants d'administration doivent etre configures avec des
+    valeurs fortes hors du code source, surtout en production.
+
+dto/request/AuthRequest.java
+    Corps JSON de connexion : email et motDePasse.
+
+dto/response/AuthResponse.java
+    Donnees retournees apres une connexion reussie : token, type Bearer,
+    identifiant, nom, prenom, email et role.
+
+reponse/ApiResponse.java, reponse/GlobalResponseAdvice.java
+    Format global des reponses de l'API. Les erreurs de validation et les
+    erreurs de securite peuvent avoir leur format specifique selon leur
+    gestionnaire. La specification OpenAPI doit rester accessible sans etre
+    enveloppee dans ApiResponse.
+
+Parcours de connexion et d'une requete protegee
+    1. Le client envoie POST /api/auth/login avec un JSON comme :
+       {"email":"acheteur@example.ml","motDePasse":"mot-de-passe"}.
+    2. AuthController transmet la demande a AuthServiceImpl.
+    3. Le service retrouve l'utilisateur, compare le mot de passe fourni a
+       son hash BCrypt et verifie l'etat du compte.
+    4. JwtUtil genere le token ; AuthResponse le retourne au client. Dans la
+       reponse globale, le token se trouve dans data.token.
+    5. Le client conserve le token de maniere appropriee et l'envoie ensuite
+       sur chaque route protegee dans l'en-tete :
+       Authorization: Bearer <JWT>
+    6. JwtAuthFilter valide le token et etablit l'identite pour la requete.
+       SecurityConfig exige l'authentification ; les annotations
+       @PreAuthorize controlent ensuite le role et, si necessaire, le
+       proprietaire de la ressource.
+    7. La requete autorisee poursuit son parcours Controller -> Service ->
+       Repository -> base de donnees ; la reponse revient au client.
+
+Roles et erreurs visibles par le client
+    Les roles sont ADMIN, AGRICULTEUR, ACHETEUR et FOURNISSEUR. Etre
+    authentifie ne signifie pas avoir le droit d'appeler toutes les routes :
+    le role et les regles de propriete sont controles separement.
+
+    HTTP 401 : authentification absente ou invalide, token expire ou
+    identifiants incorrects.
+    HTTP 403 : utilisateur authentifie mais non autorise, compte desactive
+    ou compte fournisseur pas encore valide.
+
+Utilisation depuis Angular, Flutter et Swagger
+    Angular peut ajouter automatiquement l'en-tete Bearer avec un HTTP
+    interceptor. Flutter peut configurer son client HTTP (par exemple Dio)
+    pour ajouter le meme en-tete. Le JWT doit etre conserve de facon adaptee
+    a la plateforme, supprime a la deconnexion et transmis uniquement via
+    HTTPS en production.
+
+    Dans Swagger, ouvrir Authorize et coller le JWT obtenu a la connexion ;
+    ne saisir que le token si l'interface ajoute deja le prefixe Bearer.
+    Dans Postman, ajouter Authorization avec le type Bearer Token et coller
+    le JWT.

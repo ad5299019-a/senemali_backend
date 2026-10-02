@@ -2,7 +2,9 @@ package com.senemali.api.config;
 
 import com.senemali.api.entity.Administrateurs;
 import com.senemali.api.enums.RoleEnum;
+import com.senemali.api.enums.StatutValidationFournisseur;
 import com.senemali.api.repository.AdministrateurRepository;
+import com.senemali.api.repository.FournisseurRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -23,6 +25,7 @@ import java.time.LocalDateTime;
 public class DataInitializer implements CommandLineRunner {
 
     private final AdministrateurRepository administrateurRepository;
+    private final FournisseurRepository fournisseurRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Value("${app.admin.email:senemali@gmail.com}")
@@ -62,6 +65,19 @@ public class DataInitializer implements CommandLineRunner {
                 });
             }
             log.info("Un compte administrateur existe déjà, initialisation ignorée.");
+        }
+
+        var nonApprovedSuppliers = java.util.stream.Stream.of(
+                        fournisseurRepository.findByStatutFournisseur(StatutValidationFournisseur.EN_ATTENTE),
+                        fournisseurRepository.findByStatutFournisseur(StatutValidationFournisseur.REFUSE))
+                .flatMap(java.util.Collection::stream)
+                .filter(fournisseur -> Boolean.TRUE.equals(fournisseur.getStatut()))
+                .toList();
+        if (!nonApprovedSuppliers.isEmpty()) {
+            nonApprovedSuppliers.forEach(fournisseur -> fournisseur.setStatut(false));
+            fournisseurRepository.saveAll(nonApprovedSuppliers);
+            log.info("{} compte(s) fournisseur en attente/refusé(s) désactivé(s).",
+                    nonApprovedSuppliers.size());
         }
     }
 }
