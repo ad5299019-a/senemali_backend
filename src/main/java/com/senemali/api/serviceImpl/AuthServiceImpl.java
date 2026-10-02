@@ -35,7 +35,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponse login(AuthRequest request) {
-        Utilisateurs utilisateur = utilisateursRepository.findByEmail(request.getEmail())
+        String identifiant = request.getIdentifiant().trim();
+        Utilisateurs utilisateur = utilisateursRepository.findByEmail(identifiant)
+                .or(() -> utilisateursRepository.findByTelephone(identifiant)
+                        .filter(candidate -> candidate.getRole() != RoleEnum.ADMIN))
                 .orElseThrow(() -> new BadCredentialsException("Identifiants incorrects"));
         if (!passwordEncoder.matches(request.getMotDePasse(), utilisateur.getMotDePasse())) {
             throw new BadCredentialsException("Identifiants incorrects");

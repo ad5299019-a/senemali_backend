@@ -43,7 +43,7 @@ public class AuthController {
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Connexion réussie, token JWT retourné"),
-            @ApiResponse(responseCode = "401", description = "Email ou mot de passe incorrect"),
+            @ApiResponse(responseCode = "401", description = "Email/téléphone ou mot de passe incorrect"),
             @ApiResponse(responseCode = "403", description = "Compte désactivé")
     })
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
