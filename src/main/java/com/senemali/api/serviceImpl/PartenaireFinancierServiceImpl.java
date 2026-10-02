@@ -37,11 +37,13 @@ public class PartenaireFinancierServiceImpl implements PartenaireFinancierServic
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PartenaireFinancierResponse> findAll() {
         return partenaireRepository.findAll().stream().map(mapper::toResponse).collect(Collectors.toList());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PartenaireFinancierResponse findById(Long id) {
         return mapper.toResponse(partenaireRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Partenaire non trouvé")));
@@ -64,6 +66,7 @@ public class PartenaireFinancierServiceImpl implements PartenaireFinancierServic
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PartenaireFinancierResponse> findByType(TypePartenaireEnum type) {
         return partenaireRepository.findByTypepartenaire(type).stream()
                 .map(mapper::toResponse).collect(Collectors.toList());

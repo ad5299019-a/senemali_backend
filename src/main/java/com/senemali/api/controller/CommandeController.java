@@ -25,8 +25,8 @@ public class CommandeController {
     private final CommandeService commandeService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ACHETEUR') and @accessControl.isCurrentUser(#request.idUtilisateur)")
-    @Operation(summary = "Passer une commande")
+    @PreAuthorize("hasAnyRole('ACHETEUR', 'AGRICULTEUR')")
+    @Operation(summary = "Passer une commande", description = "Un acheteur commande des produits agricoles ; un agriculteur commande des intrants. Une commande ne peut concerner qu'un seul vendeur.")
     public ResponseEntity<CommandeResponse> create(@Valid @RequestBody CommandeRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(commandeService.create(request));
     }
@@ -39,10 +39,17 @@ public class CommandeController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or @accessControl.isCommandeOwner(#id)")
+    @PreAuthorize("hasRole('ADMIN') or @accessControl.isCommandeParticipant(#id)")
     @Operation(summary = "Trouver une commande par ID")
     public ResponseEntity<CommandeResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(commandeService.findById(id));
+    }
+
+    @GetMapping("/mes-commandes")
+    @PreAuthorize("hasAnyRole('ACHETEUR', 'AGRICULTEUR', 'FOURNISSEUR')")
+    @Operation(summary = "Lister mes commandes", description = "Retourne les commandes passées par l'utilisateur et, pour les vendeurs, celles concernant leurs produits ou intrants.")
+    public ResponseEntity<List<CommandeResponse>> findMine() {
+        return ResponseEntity.ok(commandeService.findMine());
     }
 
     @GetMapping("/utilisateur/{idUtilisateur}")
@@ -53,17 +60,9 @@ public class CommandeController {
     }
 
     @PatchMapping("/{id}/statut")
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Changer le statut d'une commande")
+    @PreAuthorize("@accessControl.isCommandeParticipant(#id)")
+    @Operation(summary = "Changer le statut d'une commande", description = "Le client peut annuler sa commande en cours ; seul le vendeur peut la marquer comme livrée.")
     public ResponseEntity<CommandeResponse> updateStatut(@PathVariable Long id, @RequestParam StatutCommandeEnum statut) {
         return ResponseEntity.ok(commandeService.updateStatut(id, statut));
-    }
-
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Supprimer une commande")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        commandeService.delete(id);
-        return ResponseEntity.noContent().build();
     }
 }

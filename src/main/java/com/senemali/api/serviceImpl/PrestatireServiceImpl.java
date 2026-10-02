@@ -37,11 +37,13 @@ public class PrestatireServiceImpl implements PrestatireService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PrestatireResponse> findAll() {
         return prestatireRepository.findAll().stream().map(mapper::toResponse).collect(Collectors.toList());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PrestatireResponse findById(Long id) {
         return mapper.toResponse(prestatireRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Prestataire non trouvé")));
@@ -64,6 +66,7 @@ public class PrestatireServiceImpl implements PrestatireService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PrestatireResponse> findByType(TypePrestataireEnum type) {
         return prestatireRepository.findByTypePrestataire(type).stream()
                 .map(mapper::toResponse).collect(Collectors.toList());

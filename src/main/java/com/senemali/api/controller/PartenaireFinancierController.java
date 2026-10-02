@@ -32,18 +32,21 @@ public class PartenaireFinancierController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'AGRICULTEUR')")
     @Operation(summary = "Lister tous les partenaires")
     public ResponseEntity<List<PartenaireFinancierResponse>> findAll() {
         return ResponseEntity.ok(partenaireService.findAll());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'AGRICULTEUR')")
     @Operation(summary = "Trouver un partenaire par ID")
     public ResponseEntity<PartenaireFinancierResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(partenaireService.findById(id));
     }
 
     @GetMapping("/type/{type}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'AGRICULTEUR')")
     @Operation(summary = "Lister par type")
     public ResponseEntity<List<PartenaireFinancierResponse>> findByType(@PathVariable TypePartenaireEnum type) {
         return ResponseEntity.ok(partenaireService.findByType(type));
