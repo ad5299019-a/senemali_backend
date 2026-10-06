@@ -51,6 +51,13 @@ class SenemaliApiApplicationTests {
 
     @Test
     @WithMockUser(roles = "ACHETEUR")
+    void onlyFarmersAndSuppliersCanReadReceivedOrderCount() throws Exception {
+        mockMvc.perform(get("/api/commandes/mes-commandes/count"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "ACHETEUR")
     void onlyAdminsAndFarmersCanListFinancialPartners() throws Exception {
         mockMvc.perform(get("/api/partenaires"))
                 .andExpect(status().isForbidden());
@@ -61,6 +68,14 @@ class SenemaliApiApplicationTests {
     void onlyAdminsAndFarmersCanListProviders() throws Exception {
         mockMvc.perform(get("/api/prestataires"))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "AGRICULTEUR")
+    void categoryListCanLoadItsCultures() throws Exception {
+        mockMvc.perform(get("/api/categories-cultures"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true));
     }
 
     @Test

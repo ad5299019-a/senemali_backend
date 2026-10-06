@@ -52,11 +52,11 @@ VALUES
 
 -- 3. Tables dependantes des utilisateurs et categories
 INSERT INTO partenaire_financiers
-    (id_partenaire, nom_partenaire, typepartenaire, id_administrateur)
+    (id_partenaire, nom_partenaire, typepartenaire, telephone, localisation, description, image_url, id_administrateur)
 VALUES
-    (1, 'Banque Agricole du Mali', 'BANQUE', 1001),
-    (2, 'Microfinance Sugu', 'MICROFINANCE', 1002),
-    (3, 'Initiative Sahel', 'ONG', 1003);
+    (1, 'Banque Agricole du Mali', 'BANQUE', '+22370005001', 'Bamako', 'Financement du secteur agricole', NULL, 1001),
+    (2, 'Microfinance Sugu', 'MICROFINANCE', '+22370005002', 'Sikasso', 'Microfinancement pour les producteurs', NULL, 1002),
+    (3, 'Initiative Sahel', 'ONG', '+22370005003', 'Segou', 'Appui aux initiatives agricoles', NULL, 1003);
 
 INSERT INTO prestataires
     (id_prestataire, nom_prestataire, type_prestataire, description, specialite,
@@ -133,12 +133,12 @@ VALUES
     (3, 'Niebe rouge', 'Niebe propre et conditionne', 120, 650, 'kg', 1, NULL, '2026-02-09 11:00:00', 3003, 1003);
 
 INSERT INTO intrants
-    (id_intrant, nom_intrant, type_intrant, description, prix, disponible,
+    (id_intrant, nom_intrant, type_intrant, description, prix, quantite, disponible,
      statut_intrant, image_url, id_fournisseur, id_administrateur_validation)
 VALUES
-    (1, 'Semences de mil', 'SEMENCE', 'Semences selectionnees', 5000, 1, 'VALIDE', NULL, 4001, 1001),
-    (2, 'Engrais organique', 'ENGRAIS', 'Sac de 25 kg', 8000, 1, 'VALIDE', NULL, 4002, 1002),
-    (3, 'Pulverisateur manuel', 'MATERIEL', 'Pulverisateur pour petites parcelles', 15000, 1, 'EN_ATTENTE', NULL, 4003, 1003);
+    (1, 'Semences de mil', 'SEMENCE', 'Semences selectionnees', 5000, 100, 1, 'VALIDE', NULL, 4001, 1001),
+    (2, 'Engrais organique', 'ENGRAIS', 'Sac de 25 kg', 8000, 50, 1, 'VALIDE', NULL, 4002, 1002),
+    (3, 'Pulverisateur manuel', 'MATERIEL', 'Pulverisateur pour petites parcelles', 15000, 20, 1, 'EN_ATTENTE', NULL, 4003, 1003);
 
 -- 5. Associations plusieurs-a-plusieurs explicites
 INSERT INTO cultures_agriculteurs (id_culture_agriculteur, id_agriculteur, id_culture)

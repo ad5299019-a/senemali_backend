@@ -9,8 +9,8 @@ import lombok.Data;
 public class PartenaireFinancierRequest {
     @NotBlank private String nomPartenaire;
     @NotNull private TypePartenaireEnum typepartenaire;
-    private String description;
-    private String localisation;
-    private String telephone;
+    @NotBlank private String description;
+    @NotBlank private String localisation;
+    @NotBlank private String telephone;
     private String imageUrl;
 }

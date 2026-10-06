@@ -18,6 +18,7 @@ public class IntrantMapper {
         intrant.setTypeIntrant(request.getTypeIntrant());
         intrant.setDescription(request.getDescription());
         intrant.setPrix(request.getPrix());
+        intrant.setQuantite(request.getQuantite());
         intrant.setDisponible(request.getDisponible());
         intrant.setImageUrl(request.getImageUrl());
     }
@@ -29,6 +30,7 @@ public class IntrantMapper {
                 .typeIntrant(intrant.getTypeIntrant())
                 .description(intrant.getDescription())
                 .prix(intrant.getPrix())
+                .quantite(intrant.getQuantite())
                 .disponible(intrant.getDisponible())
                 .statutIntrant(intrant.getStatutIntrant())
                 .imageUrl(intrant.getImageUrl())

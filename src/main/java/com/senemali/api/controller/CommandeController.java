@@ -52,6 +52,13 @@ public class CommandeController {
         return ResponseEntity.ok(commandeService.findMine());
     }
 
+    @GetMapping("/mes-commandes/count")
+    @PreAuthorize("hasAnyRole('AGRICULTEUR', 'FOURNISSEUR')")
+    @Operation(summary = "Compter mes commandes reçues", description = "Compte les commandes distinctes passées auprès de l'agriculteur ou du fournisseur connecté.")
+    public ResponseEntity<Long> countMySales() {
+        return ResponseEntity.ok(commandeService.countMySales());
+    }
+
     @GetMapping("/utilisateur/{idUtilisateur}")
     @PreAuthorize("hasRole('ADMIN') or @accessControl.isCurrentUser(#idUtilisateur)")
     @Operation(summary = "Lister les commandes d'un utilisateur")

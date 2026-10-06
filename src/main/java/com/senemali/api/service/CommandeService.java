@@ -10,6 +10,7 @@ public interface CommandeService {
     List<CommandeResponse> findAll();
     CommandeResponse findById(Long id);
     List<CommandeResponse> findMine();
+    long countMySales();
     List<CommandeResponse> findByUtilisateur(Long idUtilisateur);
     CommandeResponse updateStatut(Long id, StatutCommandeEnum statut);
 }
