@@ -36,6 +36,9 @@ public class Intrants {
     private int prix;
 
     @Column(nullable = false)
+    private int quantite;
+
+    @Column(nullable = false)
     private Boolean disponible;
 
     @Column(nullable = false)

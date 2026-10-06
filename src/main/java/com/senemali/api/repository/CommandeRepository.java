@@ -18,4 +18,10 @@ public interface CommandeRepository extends JpaRepository<Commandes, Long> {
 
     @Query("select distinct c from Commandes c join c.detailCommandes d where d.intrant.fournisseur.id = :id")
     List<Commandes> findByFournisseurVendeurId(@Param("id") Long id);
+
+    @Query("select count(distinct c.idCommande) from Commandes c join c.detailCommandes d where d.produit.agriculteur.id = :id")
+    long countByAgriculteurVendeurId(@Param("id") Long id);
+
+    @Query("select count(distinct c.idCommande) from Commandes c join c.detailCommandes d where d.intrant.fournisseur.id = :id")
+    long countByFournisseurVendeurId(@Param("id") Long id);
 }

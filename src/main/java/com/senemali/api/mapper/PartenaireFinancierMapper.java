@@ -19,6 +19,10 @@ public class PartenaireFinancierMapper {
     public void updateEntity(PartenaireFinancierRequest request, PartenaireFinanciers partenaire) {
         partenaire.setNomPartenaire(request.getNomPartenaire());
         partenaire.setTypepartenaire(request.getTypepartenaire());
+        partenaire.setTelephone(request.getTelephone());
+        partenaire.setLocalisation(request.getLocalisation());
+        partenaire.setDescription(request.getDescription());
+        partenaire.setImageUrl(request.getImageUrl());
     }
 
     public PartenaireFinancierResponse toResponse(PartenaireFinanciers partenaire) {
@@ -39,6 +43,10 @@ public class PartenaireFinancierMapper {
                 .idPartenaire(partenaire.getIdPartenaire())
                 .nomPartenaire(partenaire.getNomPartenaire())
                 .typepartenaire(partenaire.getTypepartenaire())
+                .telephone(partenaire.getTelephone())
+                .localisation(partenaire.getLocalisation())
+                .description(partenaire.getDescription())
+                .imageUrl(partenaire.getImageUrl())
                 .financements(financements)
                 .build();
     }

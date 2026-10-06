@@ -87,7 +87,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<ErrorResponse> handleMaxUploadSize(MaxUploadSizeExceededException ex) {
         return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(
-                new ErrorResponse(HttpStatus.PAYLOAD_TOO_LARGE.value(), "Fichier trop volumineux. Maximum: 10MB", LocalDateTime.now())
+                new ErrorResponse(HttpStatus.PAYLOAD_TOO_LARGE.value(), "Fichier trop volumineux (images : 10 MB ; vidéos de tutoriels : 100 MB)", LocalDateTime.now())
         );
     }
 
@@ -107,6 +107,7 @@ public class GlobalExceptionHandler {
             case FORBIDDEN -> "Cette opération n'est pas autorisée";
             case NOT_FOUND -> "Ressource introuvable";
             case BAD_REQUEST -> "Requête invalide ou données incorrectes";
+            case PAYLOAD_TOO_LARGE -> "Fichier trop volumineux (images : 10 MB ; vidéos de tutoriels : 100 MB)";
             default -> status.getReasonPhrase();
         };
         return ResponseEntity.status(status).body(

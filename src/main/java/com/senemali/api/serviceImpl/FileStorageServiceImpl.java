@@ -3,9 +3,11 @@ package com.senemali.api.serviceImpl;
 import com.senemali.api.service.FileStorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -34,27 +36,41 @@ public class FileStorageServiceImpl implements FileStorageService {
     @Value("${app.base-url:http://localhost:8080}")
     private String baseUrl;
 
-    private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList(
+    private static final List<String> ALLOWED_IMAGE_EXTENSIONS = Arrays.asList(
             "jpg", "jpeg", "png", "gif", "webp", "svg"
     );
 
-    private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+    private static final List<String> ALLOWED_VIDEO_EXTENSIONS = Arrays.asList("mp4", "webm", "mov");
+
+    @Value("${app.upload.max-size:10485760}")
+    private long maxImageSize;
+
+    @Value("${app.upload.max-video-size:104857600}")
+    private long maxVideoSize;
 
     @Override
     public String saveFile(MultipartFile file, String subFolder) {
         if (file == null || file.isEmpty()) {
             throw new RuntimeException("Le fichier est vide");
         }
-        if (file.getSize() > MAX_FILE_SIZE) {
-            throw new RuntimeException("Fichier trop volumineux (max 10MB)");
-        }
-
         String originalFilename = StringUtils.cleanPath(
                 file.getOriginalFilename() != null ? file.getOriginalFilename() : "file"
         );
         String extension = getExtension(originalFilename).toLowerCase();
-        if (!ALLOWED_EXTENSIONS.contains(extension)) {
-            throw new RuntimeException("Format de fichier non supporté. Utilisez: " + ALLOWED_EXTENSIONS);
+        boolean video = "tutoriels".equals(subFolder) && ALLOWED_VIDEO_EXTENSIONS.contains(extension);
+        if (!ALLOWED_IMAGE_EXTENSIONS.contains(extension) && !video) {
+            List<String> allowedExtensions = "tutoriels".equals(subFolder)
+                    ? Arrays.asList("jpg", "jpeg", "png", "gif", "webp", "svg", "mp4", "webm", "mov")
+                    : ALLOWED_IMAGE_EXTENSIONS;
+            throw new RuntimeException("Format de fichier non supporté. Utilisez: " + allowedExtensions);
+        }
+        long maxFileSize = video ? maxVideoSize : maxImageSize;
+        if (file.getSize() > maxFileSize) {
+            long maxSizeMb = maxFileSize / (1024 * 1024);
+            throw new ResponseStatusException(
+                    HttpStatus.PAYLOAD_TOO_LARGE,
+                    "Fichier trop volumineux (maximum " + maxSizeMb + " MB)"
+            );
         }
 
         // Générer un nom unique pour éviter les conflits

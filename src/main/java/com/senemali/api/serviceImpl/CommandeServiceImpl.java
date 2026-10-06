@@ -141,6 +141,19 @@ public class CommandeServiceImpl implements CommandeService {
 
     @Override
     @Transactional(readOnly = true)
+    public long countMySales() {
+        Utilisateurs utilisateur = accessControl.requireCurrentUser();
+        return switch (utilisateur.getRole()) {
+            case AGRICULTEUR -> commandeRepository.countByAgriculteurVendeurId(utilisateur.getId());
+            case FOURNISSEUR -> commandeRepository.countByFournisseurVendeurId(utilisateur.getId());
+            default -> throw new AccessDeniedException(
+                    "Seuls un agriculteur ou un fournisseur peuvent consulter le nombre de commandes reçues"
+            );
+        };
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<CommandeResponse> findByUtilisateur(Long idUtilisateur) {
         return commandeRepository.findByUtilisateur_Id(idUtilisateur).stream()
                 .map(mapper::toResponse).collect(Collectors.toList());

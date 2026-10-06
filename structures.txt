@@ -84,6 +84,23 @@ repository/
 security/
     Composants de securite et gestion des tokens JWT.
 
+controller/FileUploadController.java, serviceImpl/FileStorageServiceImpl.java
+    Upload de fichiers via multipart/form-data dans le dossier local configure
+    par app.upload.dir. Les images sont rangees par dossier (profils,
+    produits, intrants, tutoriels, services, conseils, financements) et
+    limitees a 10 MB. Le dossier tutoriels accepte aussi les videos MP4,
+    WEBM et MOV jusqu'a 100 MB. Les fichiers ont un nom UUID ; l'URL publique
+    /uploads/{dossier}/{nom} pointe vers le fichier sans stocker son contenu
+    dans MySQL. Les chemins d'URL sont servis par config/WebMvcConfig.java.
+
+Quantites de stock
+    ProduitAgricoleResponse expose deja quantite pour le stock d'un produit.
+    IntrantResponse expose egalement quantite pour le stock d'un intrant ;
+    IntrantRequest exige une quantite positive a la creation ou modification.
+    La quantite d'une ligne DetailCommandeResponse est la quantite commandee,
+    tandis que celle renvoyee dans les reponses produit/intrant correspond
+    au stock declare pour l'article.
+
 service/
     Interfaces qui definissent les operations metier disponibles.
 
@@ -125,6 +142,9 @@ statut et ne supprime pas les commandes. Les acheteurs, agriculteurs et
 fournisseurs consultent leurs commandes/interventions avec
 GET /api/commandes/mes-commandes. Un client peut annuler sa commande en
 cours ; seul le vendeur concerne peut la marquer LIVREE.
+GET /api/commandes/mes-commandes/count renvoie pour un agriculteur ou un
+fournisseur authentifie le nombre de commandes distinctes recues pour
+ses produits ou intrants.
 
 4. RESSOURCES
 --------------

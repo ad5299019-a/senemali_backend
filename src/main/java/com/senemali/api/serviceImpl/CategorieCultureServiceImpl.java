@@ -28,11 +28,13 @@ public class CategorieCultureServiceImpl implements CategorieCultureService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CategorieCultureResponse> findAll() {
         return repository.findAll().stream().map(mapper::toResponse).collect(Collectors.toList());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CategorieCultureResponse findById(Long id) {
         return mapper.toResponse(repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Catégorie non trouvée")));
