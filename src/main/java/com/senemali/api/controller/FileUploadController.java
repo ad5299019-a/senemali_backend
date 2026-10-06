@@ -13,13 +13,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Map;
 
 /**
- * Controller pour l'upload de fichiers (images).
+ * Controller pour l'upload de fichiers (images et vidéos de tutoriels).
  *
  * Utilisé par Angular et Flutter pour uploader :
  * - Photos de profil des utilisateurs
  * - Images des produits agricoles
  * - Images des intrants
- * - Miniatures des tutoriels
+ * - Images et vidéos des tutoriels
  *
  * Flutter exemple :
  *   final request = http.MultipartRequest('POST', Uri.parse('$baseUrl/api/files/upload/produits'));
@@ -32,7 +32,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/files")
 @RequiredArgsConstructor
-@Tag(name = "Upload Fichiers", description = "Upload d'images (profils, produits, tutoriels)")
+@Tag(name = "Upload Fichiers", description = "Upload d'images et de vidéos de tutoriels")
 @SecurityRequirement(name = "bearerAuth")
 public class FileUploadController {
 
@@ -41,8 +41,8 @@ public class FileUploadController {
     @PostMapping("/upload/{folder}")
     @PreAuthorize("hasAnyRole('ADMIN', 'AGRICULTEUR', 'ACHETEUR', 'FOURNISSEUR')")
     @Operation(
-            summary = "Uploader une image",
-            description = "Folders disponibles: profils, produits, intrants, tutoriels, services"
+            summary = "Uploader une image ou une vidéo de tutoriel",
+            description = "Les dossiers acceptent les images. Le dossier tutoriels accepte aussi les vidéos MP4, WEBM et MOV (100 MB maximum). Les images sont limitées à 10 MB."
     )
     public ResponseEntity<Map<String, String>> uploadFile(
             @RequestParam("file") MultipartFile file,
@@ -51,7 +51,7 @@ public class FileUploadController {
         // Valider le sous-dossier autorisé
         if (!isValidFolder(folder)) {
             return ResponseEntity.badRequest().body(Map.of(
-                    "error", "Dossier non autorisé. Utilisez: profils, produits, intrants, tutoriels, services"
+                    "error", "Dossier non autorisé. Utilisez: profils, produits, intrants, tutoriels, services,financememts"
             ));
         }
 
@@ -82,6 +82,6 @@ public class FileUploadController {
     }
 
     private boolean isValidFolder(String folder) {
-        return folder != null && folder.matches("profils|produits|intrants|tutoriels|services|conseils");
+        return folder != null && folder.matches("profils|produits|intrants|tutoriels|services|conseils|financements");
     }
 }
