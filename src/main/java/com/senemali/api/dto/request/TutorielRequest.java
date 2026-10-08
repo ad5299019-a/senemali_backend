@@ -6,9 +6,15 @@ import lombok.Data;
 
 @Data
 public class TutorielRequest {
-    @NotBlank private String titreTutoriel;
-    @NotBlank private String descriptionTutoriel;
-    @NotBlank private String urlImage;
-    @NotBlank private String urlVideo;
-    @NotNull private Long idCategorie;
+    @NotBlank(message = "Le titre du tutoriel est requis")
+    private String titreTutoriel;
+
+    @NotBlank(message = "La description du tutoriel est requise")
+    private String descriptionTutoriel;
+
+    private String urlImage;
+    private String urlVideo;
+
+    @NotNull(message = "La catégorie est requise")
+    private Long idCategorie;
 }

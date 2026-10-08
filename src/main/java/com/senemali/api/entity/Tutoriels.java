@@ -12,19 +12,18 @@ import lombok.*;
 public class Tutoriels {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long idTutoriel;
 
     @Column(nullable = false)
     private String titreTutoriel;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String descriptionTutoriel;
 
-    @Column(nullable = false)
+    @Column(length = 1000)
     private String urlImage;
 
-    @Column(nullable = false)
+    @Column(length = 1000)
     private String urlVideo;
 
     @ManyToOne
@@ -35,4 +34,3 @@ public class Tutoriels {
     @JoinColumn(name = "id_categorie", nullable = false)
     private CategorieCultures categorie;
 }
-

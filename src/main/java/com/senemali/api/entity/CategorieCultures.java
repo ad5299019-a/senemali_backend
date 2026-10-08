@@ -23,6 +23,7 @@ public class CategorieCultures {
     @Column(nullable = false)
     private String nomCategorie;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @OneToMany(mappedBy = "categorie",cascade = CascadeType.ALL,orphanRemoval = true)

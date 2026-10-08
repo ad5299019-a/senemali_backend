@@ -51,7 +51,7 @@ public class FileUploadController {
         // Valider le sous-dossier autorisé
         if (!isValidFolder(folder)) {
             return ResponseEntity.badRequest().body(Map.of(
-                    "error", "Dossier non autorisé. Utilisez: profils, produits, intrants, tutoriels, services,financememts"
+                    "error", "Dossier non autorisé. Utilisez: profils, produits, intrants, cultures, tutoriels, services, conseils, financements"
             ));
         }
 
@@ -82,6 +82,6 @@ public class FileUploadController {
     }
 
     private boolean isValidFolder(String folder) {
-        return folder != null && folder.matches("profils|produits|intrants|tutoriels|services|conseils|financements");
+        return folder != null && folder.matches("profils|produits|intrants|cultures|tutoriels|services|conseils|financements");
     }
 }

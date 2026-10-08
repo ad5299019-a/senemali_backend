@@ -23,8 +23,10 @@ public class Cultures {
     @Column(nullable = false)
     private String nomCulture;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column(length = 1000)
     private String imageUrl;
 
     @ManyToOne
