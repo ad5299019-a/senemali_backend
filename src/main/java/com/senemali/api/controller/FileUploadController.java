@@ -39,7 +39,7 @@ public class FileUploadController {
     private final FileStorageService fileStorageService;
 
     @PostMapping("/upload/{folder}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'AGRICULTEUR', 'ACHETEUR', 'FOURNISSEUR')")
+    @PreAuthorize("#folder == 'profils' or hasAnyRole('ADMIN', 'AGRICULTEUR', 'ACHETEUR', 'FOURNISSEUR')")
     @Operation(
             summary = "Uploader une image ou une vidéo de tutoriel",
             description = "Les dossiers acceptent les images. Le dossier tutoriels accepte aussi les vidéos MP4, WEBM et MOV (100 MB maximum). Les images sont limitées à 10 MB."
