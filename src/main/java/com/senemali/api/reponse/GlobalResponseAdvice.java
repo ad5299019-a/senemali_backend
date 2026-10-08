@@ -10,7 +10,10 @@ import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import com.senemali.api.exception.ErrorResponse;
+
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalResponseAdvice implements ResponseBodyAdvice<Object> {
@@ -42,9 +45,16 @@ public class GlobalResponseAdvice implements ResponseBodyAdvice<Object> {
             status = servletResponse.getServletResponse().getStatus();
         }
         boolean success = status < 400;
-        String message = success
-                ? getSuccessMessage(status, request.getMethod().name())
-                : getErrorMessage(status);
+        String message;
+        if (success) {
+            message = getSuccessMessage(status, request.getMethod().name());
+        } else if (body instanceof ErrorResponse errorResponse && errorResponse.getMessage() != null && !errorResponse.getMessage().isBlank()) {
+            message = errorResponse.getMessage();
+        } else if (body instanceof Map<?, ?> map && map.containsKey("message") && map.get("message") != null) {
+            message = String.valueOf(map.get("message"));
+        } else {
+            message = getErrorMessage(status);
+        }
 
         return new ApiResponse<>(success, status, message, body, LocalDateTime.now());
     }

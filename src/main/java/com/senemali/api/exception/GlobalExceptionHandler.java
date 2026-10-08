@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +23,7 @@ import java.util.Map;
  * Retourne des réponses JSON cohérentes pour Angular et Flutter.
  */
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     /** 404 - Ressource non trouvée */
@@ -35,8 +37,12 @@ public class GlobalExceptionHandler {
     /** 400 - Erreur métier ou données incorrectes */
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleRuntime(RuntimeException ex) {
+        log.error("Erreur d'exécution : ", ex);
+        String message = ex.getMessage() != null && !ex.getMessage().isBlank()
+                ? ex.getMessage()
+                : "Requête invalide ou données incorrectes";
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Requête invalide ou données incorrectes", LocalDateTime.now())
+                new ErrorResponse(HttpStatus.BAD_REQUEST.value(), message, LocalDateTime.now())
         );
     }
 
@@ -50,11 +56,16 @@ public class GlobalExceptionHandler {
             fieldErrors.put(fieldName, errorMessage);
         });
 
+        String detailMessage = fieldErrors.isEmpty()
+                ? "Des champs sont invalides"
+                : "Champs invalides : " + String.join(", ", fieldErrors.values());
+
         Map<String, Object> response = new HashMap<>();
         response.put("status", HttpStatus.BAD_REQUEST.value());
         response.put("error", "Erreur de validation");
-        response.put("message", "Des champs sont invalides");
+        response.put("message", detailMessage);
         response.put("fields", fieldErrors);
+        response.put("errors", fieldErrors);
         response.put("timestamp", LocalDateTime.now().toString());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
@@ -91,11 +102,23 @@ public class GlobalExceptionHandler {
         );
     }
 
-    /** 409 - Conflit de données (email/téléphone déjà utilisé, contrainte unique, etc.) */
+    /** 409 / 400 - Conflit de données ou violation de contrainte d'intégrité */
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataConflict(DataIntegrityViolationException ex) {
+        log.error("Violation d'intégrité des données : ", ex);
+        String cause = ex.getMostSpecificCause() != null ? ex.getMostSpecificCause().getMessage() : ex.getMessage();
+        if (cause != null && (cause.contains("Data too long") || cause.contains("too long"))) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "Le contenu d'un champ dépasse la taille maximale autorisée (ex: description ou image trop longue).", LocalDateTime.now())
+            );
+        }
+        if (cause != null && cause.contains("Duplicate entry")) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                    new ErrorResponse(HttpStatus.CONFLICT.value(), "Cette information existe déjà dans le système.", LocalDateTime.now())
+            );
+        }
         return ResponseEntity.status(HttpStatus.CONFLICT).body(
-                new ErrorResponse(HttpStatus.CONFLICT.value(), "Conflit avec une donnée déjà existante", LocalDateTime.now())
+                new ErrorResponse(HttpStatus.CONFLICT.value(), "Conflit avec une donnée existante ou contrainte non respectée", LocalDateTime.now())
         );
     }
 
