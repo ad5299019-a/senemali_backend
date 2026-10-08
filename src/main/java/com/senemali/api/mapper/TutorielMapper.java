@@ -16,8 +16,8 @@ public class TutorielMapper {
     public void updateEntity(TutorielRequest request, Tutoriels tutoriel) {
         tutoriel.setTitreTutoriel(request.getTitreTutoriel());
         tutoriel.setDescriptionTutoriel(request.getDescriptionTutoriel());
-        tutoriel.setUrlImage(request.getUrlImage());
-        tutoriel.setUrlVideo(request.getUrlVideo());
+        tutoriel.setUrlImage(request.getUrlImage() != null && !request.getUrlImage().isBlank() ? request.getUrlImage() : null);
+        tutoriel.setUrlVideo(request.getUrlVideo() != null && !request.getUrlVideo().isBlank() ? request.getUrlVideo() : null);
     }
 
     public TutorielResponse toResponse(Tutoriels tutoriel) {
