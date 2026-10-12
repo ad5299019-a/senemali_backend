@@ -1,7 +1,6 @@
 package com.senemali.api.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
@@ -15,6 +14,6 @@ public class TutorielRequest {
     private String urlImage;
     private String urlVideo;
 
-    @NotNull(message = "La catégorie est requise")
+    /** ID de la catégorie concernée, ou null si le tutoriel concerne toutes les catégories */
     private Long idCategorie;
 }
