@@ -8,4 +8,5 @@ import java.util.List;
 @Repository
 public interface TutorielRepository extends JpaRepository<Tutoriels, Long> {
     List<Tutoriels> findByCategorie_IdCategorie(Long idCategorie);
+    List<Tutoriels> findByCategorie_IdCategorieOrCategorieIsNull(Long idCategorie);
 }

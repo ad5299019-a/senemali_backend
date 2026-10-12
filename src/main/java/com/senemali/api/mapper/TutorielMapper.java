@@ -28,7 +28,7 @@ public class TutorielMapper {
                 .urlImage(tutoriel.getUrlImage())
                 .urlVideo(tutoriel.getUrlVideo())
                 .idCategorie(tutoriel.getCategorie() != null ? tutoriel.getCategorie().getIdCategorie() : null)
-                .nomCategorie(tutoriel.getCategorie() != null ? tutoriel.getCategorie().getNomCategorie() : null)
+                .nomCategorie(tutoriel.getCategorie() != null ? tutoriel.getCategorie().getNomCategorie() : "Toutes les catégories")
                 .idAdministrateur(tutoriel.getAdministrateur() != null
                         ? tutoriel.getAdministrateur().getId() : null)
                 .build();
