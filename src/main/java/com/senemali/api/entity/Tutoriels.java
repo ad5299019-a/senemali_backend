@@ -31,6 +31,6 @@ public class Tutoriels {
     private Administrateurs administrateur;
 
     @ManyToOne
-    @JoinColumn(name = "id_categorie", nullable = false)
+    @JoinColumn(name = "id_categorie", nullable = true)
     private CategorieCultures categorie;
 }

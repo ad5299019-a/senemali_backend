@@ -30,8 +30,11 @@ public class TutorielServiceImpl implements TutorielService {
     @Override
     @Transactional
     public TutorielResponse create(TutorielRequest request) {
-        CategorieCultures categorie = categorieCultureRepository.findById(request.getIdCategorie())
-                .orElseThrow(() -> new ResourceNotFoundException("Catégorie non trouvée"));
+        CategorieCultures categorie = null;
+        if (request.getIdCategorie() != null && request.getIdCategorie() > 0) {
+            categorie = categorieCultureRepository.findById(request.getIdCategorie())
+                    .orElseThrow(() -> new ResourceNotFoundException("Catégorie non trouvée"));
+        }
         Administrateurs admin = administrateurRepository.findById(accessControl.currentAdminId())
                 .orElseThrow(() -> new ResourceNotFoundException("Administrateur non trouvé"));
         Tutoriels tutoriel = mapper.toEntity(request);
@@ -57,6 +60,13 @@ public class TutorielServiceImpl implements TutorielService {
         Tutoriels tutoriel = tutorielRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tutoriel non trouvé"));
         mapper.updateEntity(request, tutoriel);
+        if (request.getIdCategorie() != null && request.getIdCategorie() > 0) {
+            CategorieCultures categorie = categorieCultureRepository.findById(request.getIdCategorie())
+                    .orElseThrow(() -> new ResourceNotFoundException("Catégorie non trouvée"));
+            tutoriel.setCategorie(categorie);
+        } else {
+            tutoriel.setCategorie(null);
+        }
         return mapper.toResponse(tutorielRepository.save(tutoriel));
     }
 
@@ -69,7 +79,7 @@ public class TutorielServiceImpl implements TutorielService {
 
     @Override
     public List<TutorielResponse> findByCategorie(Long idCategorie) {
-        return tutorielRepository.findByCategorie_IdCategorie(idCategorie).stream()
+        return tutorielRepository.findByCategorie_IdCategorieOrCategorieIsNull(idCategorie).stream()
                 .map(mapper::toResponse).collect(Collectors.toList());
     }
 }
