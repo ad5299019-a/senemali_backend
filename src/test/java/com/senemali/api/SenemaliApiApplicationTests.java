@@ -51,6 +51,17 @@ class SenemaliApiApplicationTests {
 
     @Test
     @WithMockUser(roles = "ACHETEUR")
+    void orderLinesRequirePositiveQuantities() throws Exception {
+        mockMvc.perform(post("/api/commandes")
+                        .contentType("application/json")
+                        .content("{\"details\":[{\"idProduit\":1,\"quantite\":0}]}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.status").value(400));
+    }
+
+    @Test
+    @WithMockUser(roles = "ACHETEUR")
     void onlyFarmersAndSuppliersCanReadReceivedOrderCount() throws Exception {
         mockMvc.perform(get("/api/commandes/mes-commandes/count"))
                 .andExpect(status().isForbidden());
