@@ -2,7 +2,9 @@ package com.senemali.api.repository;
 
 import com.senemali.api.entity.Commandes;
 import com.senemali.api.enums.StatutCommandeEnum;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -10,6 +12,10 @@ import java.util.List;
 
 @Repository
 public interface CommandeRepository extends JpaRepository<Commandes, Long> {
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select c from Commandes c where c.idCommande = :id")
+    java.util.Optional<Commandes> findByIdForUpdate(@Param("id") Long id);
+
     List<Commandes> findByUtilisateur_Id(Long idUtilisateur);
     List<Commandes> findByStatus(StatutCommandeEnum status);
 
