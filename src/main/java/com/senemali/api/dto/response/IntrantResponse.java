@@ -17,6 +17,7 @@ public class IntrantResponse {
     private String description;
     private int prix;
     private int quantite;
+    private String unite;
     private Boolean disponible;
     private StatutValidationFournisseur statutIntrant;
     private String imageUrl;
