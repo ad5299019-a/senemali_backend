@@ -133,12 +133,12 @@ VALUES
     (3, 'Niebe rouge', 'Niebe propre et conditionne', 120, 650, 'kg', 1, NULL, '2026-02-09 11:00:00', 3003, 1003);
 
 INSERT INTO intrants
-    (id_intrant, nom_intrant, type_intrant, description, prix, quantite, disponible,
+    (id_intrant, nom_intrant, type_intrant, description, prix, quantite, unite, disponible,
      statut_intrant, image_url, id_fournisseur, id_administrateur_validation)
 VALUES
-    (1, 'Semences de mil', 'SEMENCE', 'Semences selectionnees', 5000, 100, 1, 'VALIDE', NULL, 4001, 1001),
-    (2, 'Engrais organique', 'ENGRAIS', 'Sac de 25 kg', 8000, 50, 1, 'VALIDE', NULL, 4002, 1002),
-    (3, 'Pulverisateur manuel', 'MATERIEL', 'Pulverisateur pour petites parcelles', 15000, 20, 1, 'EN_ATTENTE', NULL, 4003, 1003);
+    (1, 'Semences de mil', 'SEMENCE', 'Semences selectionnees', 5000, 100, 'kg', 1, 'VALIDE', NULL, 4001, 1001),
+    (2, 'Engrais organique', 'ENGRAIS', 'Sac de 25 kg', 8000, 50, 'sac', 1, 'VALIDE', NULL, 4002, 1002),
+    (3, 'Pulverisateur manuel', 'MATERIEL', 'Pulverisateur pour petites parcelles', 15000, 20, 'unite', 1, 'EN_ATTENTE', NULL, 4003, 1003);
 
 -- 5. Associations plusieurs-a-plusieurs explicites
 INSERT INTO cultures_agriculteurs (id_culture_agriculteur, id_agriculteur, id_culture)

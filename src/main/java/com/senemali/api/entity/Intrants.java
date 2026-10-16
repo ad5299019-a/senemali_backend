@@ -39,6 +39,9 @@ public class Intrants {
     private int quantite;
 
     @Column(nullable = false)
+    private String unite;
+
+    @Column(nullable = false)
     private Boolean disponible;
 
     @Column(nullable = false)

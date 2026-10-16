@@ -12,6 +12,7 @@ public class IntrantRequest {
     private String description;
     @NotNull @Positive private Integer prix;
     @NotNull @Positive private Integer quantite;
+    @NotBlank private String unite;
     @NotNull private Boolean disponible;
     private String imageUrl;
     @NotNull private Long idFournisseur;
