@@ -66,9 +66,16 @@ public class CommandeController {
         return ResponseEntity.ok(commandeService.findByUtilisateur(idUtilisateur));
     }
 
+    @PatchMapping("/{id}/confirmer")
+    @PreAuthorize("@accessControl.isCommandeParticipant(#id)")
+    @Operation(summary = "Confirmer une commande", description = "Seul le vendeur concerné peut confirmer une commande en cours.")
+    public ResponseEntity<CommandeResponse> confirmer(@PathVariable Long id) {
+        return ResponseEntity.ok(commandeService.confirmer(id));
+    }
+
     @PatchMapping("/{id}/statut")
     @PreAuthorize("@accessControl.isCommandeParticipant(#id)")
-    @Operation(summary = "Changer le statut d'une commande", description = "Le client peut annuler sa commande en cours ; seul le vendeur peut la marquer comme livrée.")
+    @Operation(summary = "Changer le statut d'une commande", description = "Le client peut annuler une commande en cours ; seul le vendeur peut marquer une commande confirmée comme livrée.")
     public ResponseEntity<CommandeResponse> updateStatut(@PathVariable Long id, @RequestParam StatutCommandeEnum statut) {
         return ResponseEntity.ok(commandeService.updateStatut(id, statut));
     }

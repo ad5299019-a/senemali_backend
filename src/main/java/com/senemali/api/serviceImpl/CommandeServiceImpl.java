@@ -169,28 +169,45 @@ public class CommandeServiceImpl implements CommandeService {
 
     @Override
     @Transactional
+    public CommandeResponse confirmer(Long id) {
+        Commandes commande = commandeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Commande non trouvée"));
+        Utilisateurs utilisateurCourant = accessControl.requireCurrentUser();
+        if (!isSellerForCommande(commande, utilisateurCourant)) {
+            throw new AccessDeniedException("Seul le vendeur concerné peut confirmer la commande");
+        }
+        if (commande.getStatus() != StatutCommandeEnum.EN_COURS) {
+            throw new IllegalArgumentException("Seule une commande en cours peut être confirmée");
+        }
+        commande.setStatus(StatutCommandeEnum.CONFIRMEE);
+        return mapper.toResponse(commandeRepository.save(commande));
+    }
+
+    @Override
+    @Transactional
     public CommandeResponse updateStatut(Long id, StatutCommandeEnum statut) {
         Commandes commande = commandeRepository.findByIdForUpdate(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Commande non trouvée"));
         Utilisateurs utilisateurCourant = accessControl.requireCurrentUser();
         boolean client = commande.getUtilisateur().getId().equals(utilisateurCourant.getId());
-        boolean vendeur = commande.getDetailCommandes().stream().anyMatch(detail ->
-                (detail.getProduit() != null
-                        && detail.getProduit().getAgriculteur().getId().equals(utilisateurCourant.getId()))
-                        || (detail.getIntrant() != null
-                        && detail.getIntrant().getFournisseur().getId().equals(utilisateurCourant.getId())));
+        boolean vendeur = isSellerForCommande(commande, utilisateurCourant);
 
-        if (commande.getStatus() != StatutCommandeEnum.EN_COURS) {
-            throw new IllegalArgumentException("Seule une commande en cours peut changer de statut");
-        }
-        if (statut == StatutCommandeEnum.ANNULER && !client) {
-            throw new AccessDeniedException("Seul le client ayant passé la commande peut l'annuler");
-        }
-        if (statut == StatutCommandeEnum.LIVREE && !vendeur) {
-            throw new AccessDeniedException("Seul le vendeur concerné peut marquer la commande comme livrée");
-        }
-        if (statut == StatutCommandeEnum.EN_COURS) {
-            throw new IllegalArgumentException("Le statut EN_COURS est le statut initial de la commande");
+        if (statut == StatutCommandeEnum.ANNULER) {
+            if (commande.getStatus() != StatutCommandeEnum.EN_COURS) {
+                throw new IllegalArgumentException("Seule une commande en cours peut être annulée");
+            }
+            if (!client) {
+                throw new AccessDeniedException("Seul le client ayant passé la commande peut l'annuler");
+            }
+        } else if (statut == StatutCommandeEnum.LIVREE) {
+            if (commande.getStatus() != StatutCommandeEnum.CONFIRMEE) {
+                throw new IllegalArgumentException("Seule une commande confirmée peut être marquée comme livrée");
+            }
+            if (!vendeur) {
+                throw new AccessDeniedException("Seul le vendeur concerné peut marquer la commande comme livrée");
+            }
+        } else {
+            throw new IllegalArgumentException("Ce statut ne peut pas être défini via cet endpoint");
         }
         if (statut == StatutCommandeEnum.ANNULER) {
             for (DetailCommandes detail : commande.getDetailCommandes()) {
@@ -209,5 +226,13 @@ public class CommandeServiceImpl implements CommandeService {
         }
         commande.setStatus(statut);
         return mapper.toResponse(commandeRepository.save(commande));
+    }
+
+    private boolean isSellerForCommande(Commandes commande, Utilisateurs utilisateur) {
+        return commande.getDetailCommandes().stream().anyMatch(detail ->
+                (detail.getProduit() != null
+                        && detail.getProduit().getAgriculteur().getId().equals(utilisateur.getId()))
+                        || (detail.getIntrant() != null
+                        && detail.getIntrant().getFournisseur().getId().equals(utilisateur.getId())));
     }
 }
