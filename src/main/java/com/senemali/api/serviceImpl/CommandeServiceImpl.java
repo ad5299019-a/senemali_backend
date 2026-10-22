@@ -223,7 +223,7 @@ public class CommandeServiceImpl implements CommandeService {
         } else {
             throw new IllegalArgumentException("Ce statut ne peut pas être défini via cet endpoint");
         }
-        if (statut == StatutCommandeEnum.ANNULER) {
+        if (statut == StatutCommandeEnum.ANNULEE) {
             for (DetailCommandes detail : commande.getDetailCommandes()) {
                 if (detail.getProduit() != null) {
                     ProduitAgricoles produit = produitRepository
