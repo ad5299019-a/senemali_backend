@@ -25,6 +25,8 @@ public class CommandeMapper {
                 .montantTotal(commande.getMontantTotal())
                 .idUtilisateur(commande.getUtilisateur() != null ? commande.getUtilisateur().getId() : null)
                 .nomUtilisateur(commande.getUtilisateur() != null ? commande.getUtilisateur().getNom() : null)
+                .prenomUtilisateur(commande.getUtilisateur() != null ? commande.getUtilisateur().getPrenom() : null)
+                .telephoneUtilisateur(commande.getUtilisateur() != null ? commande.getUtilisateur().getTelephone() : null)
                 .idVendeur(vendeur != null ? vendeur.getId() : null)
                 .nomVendeur(vendeur != null ? vendeur.getNom() : null)
                 .roleVendeur(vendeur != null ? vendeur.getRole().name() : null)
