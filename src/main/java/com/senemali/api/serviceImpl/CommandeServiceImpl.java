@@ -164,15 +164,29 @@ public class CommandeServiceImpl implements CommandeService {
     public CommandeResponse confirmer(Long id) {
         Commandes commande = commandeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Commande non trouvée"));
-        Utilisateurs utilisateurCourant = accessControl.requireCurrentUser();
-        if (!isSellerForCommande(commande, utilisateurCourant)) {
-            throw new AccessDeniedException("Seul le vendeur concerné peut confirmer la commande");
-        }
-        if (commande.getStatus() != StatutCommandeEnum.EN_COURS) {
-            throw new IllegalArgumentException("Seule une commande en cours peut être confirmée");
-        }
+        verifierVendeurCommandeEnCours(commande, "confirmer", "confirmée");
         commande.setStatus(StatutCommandeEnum.CONFIRMEE);
         return mapper.toResponse(commandeRepository.save(commande));
+    }
+
+    @Override
+    @Transactional
+    public CommandeResponse refuser(Long id) {
+        Commandes commande = commandeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Commande non trouvée"));
+        verifierVendeurCommandeEnCours(commande, "refuser", "refusée");
+        commande.setStatus(StatutCommandeEnum.REFUSEE);
+        return mapper.toResponse(commandeRepository.save(commande));
+    }
+
+    private void verifierVendeurCommandeEnCours(Commandes commande, String action, String actionPasse) {
+        Utilisateurs utilisateurCourant = accessControl.requireCurrentUser();
+        if (!isSellerForCommande(commande, utilisateurCourant)) {
+            throw new AccessDeniedException("Seul le vendeur concerné peut " + action + " la commande");
+        }
+        if (commande.getStatus() != StatutCommandeEnum.EN_COURS) {
+            throw new IllegalArgumentException("Seule une commande en cours peut être " + actionPasse);
+        }
     }
 
     @Override
@@ -184,7 +198,7 @@ public class CommandeServiceImpl implements CommandeService {
         boolean client = commande.getUtilisateur().getId().equals(utilisateurCourant.getId());
         boolean vendeur = isSellerForCommande(commande, utilisateurCourant);
 
-        if (statut == StatutCommandeEnum.ANNULER) {
+        if (statut == StatutCommandeEnum.ANNULEE) {
             if (commande.getStatus() != StatutCommandeEnum.EN_COURS) {
                 throw new IllegalArgumentException("Seule une commande en cours peut être annulée");
             }

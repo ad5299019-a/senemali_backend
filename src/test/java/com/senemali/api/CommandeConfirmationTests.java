@@ -79,6 +79,19 @@ class CommandeConfirmationTests {
     }
 
     @Test
+    void vendeurCanRefuseAnOrderInProgress() {
+        CommandeResponse response = new CommandeResponse();
+        when(commande.getStatus()).thenReturn(StatutCommandeEnum.EN_COURS);
+        when(commandeRepository.save(commande)).thenReturn(commande);
+        when(mapper.toResponse(commande)).thenReturn(response);
+
+        assertSame(response, commandeService.refuser(1L));
+
+        verify(commande).setStatus(StatutCommandeEnum.REFUSEE);
+        verify(commandeRepository).save(commande);
+    }
+
+    @Test
     void orderCannotBeMarkedDeliveredBeforeConfirmation() {
         when(client.getId()).thenReturn(10L);
         when(commande.getUtilisateur()).thenReturn(client);

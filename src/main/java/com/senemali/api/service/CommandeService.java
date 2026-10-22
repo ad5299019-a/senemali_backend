@@ -13,5 +13,6 @@ public interface CommandeService {
     long countMySales();
     List<CommandeResponse> findByUtilisateur(Long idUtilisateur);
     CommandeResponse confirmer(Long id);
+    CommandeResponse refuser(Long id);
     CommandeResponse updateStatut(Long id, StatutCommandeEnum statut);
 }

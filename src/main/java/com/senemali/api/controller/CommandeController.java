@@ -73,6 +73,13 @@ public class CommandeController {
         return ResponseEntity.ok(commandeService.confirmer(id));
     }
 
+    @PatchMapping("/{id}/refuser")
+    @PreAuthorize("@accessControl.isCommandeParticipant(#id)")
+    @Operation(summary = "Refuser une commande", description = "Seul le vendeur concerné peut refuser une commande en cours.")
+    public ResponseEntity<CommandeResponse> refuser(@PathVariable Long id) {
+        return ResponseEntity.ok(commandeService.refuser(id));
+    }
+
     @PatchMapping("/{id}/statut")
     @PreAuthorize("@accessControl.isCommandeParticipant(#id)")
     @Operation(summary = "Changer le statut d'une commande", description = "Le client peut annuler une commande en cours ; seul le vendeur peut marquer une commande confirmée comme livrée.")
