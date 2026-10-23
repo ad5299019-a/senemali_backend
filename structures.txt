@@ -233,6 +233,17 @@ serviceImpl/AuthServiceImpl.java
     demande a JwtUtil de creer le token. A l'inscription, encode le mot de
     passe avant de l'enregistrer. La creation publique d'un ADMIN est refusee.
 
+Protection des mots de passe en base
+    Les mots de passe ne sont pas chiffres de maniere reversible : ils sont
+    haches avec BCrypt avant leur enregistrement dans la colonne mot_de_passe
+    de la table utilisateurs. SecurityConfig configure BCrypt avec un facteur
+    de cout de 12. BCrypt genere un sel aleatoire et l'inclut dans la valeur
+    hachee ; deux encodages d'un meme mot de passe peuvent donc etre differents.
+    Lors de la connexion, AuthServiceImpl utilise passwordEncoder.matches()
+    pour verifier le mot de passe saisi a partir du hash stocke. Le mot de
+    passe original ne peut pas etre recupere depuis ce hash ; en cas d'oubli,
+    il faut mettre en place une procedure de reinitialisation.
+
 config/DataInitializer.java
     Initialise le compte administrateur de bootstrap selon la configuration
     et desactive les fournisseurs en attente ou refuses qui seraient actifs.

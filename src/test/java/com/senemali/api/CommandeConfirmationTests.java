@@ -46,14 +46,16 @@ class CommandeConfirmationTests {
     private Commandes commande;
     private Utilisateurs vendeur;
     private Utilisateurs client;
+    private DetailCommandes detail;
+    private ProduitAgricoles produit;
 
     @BeforeEach
     void setUp() {
         commande = mock(Commandes.class);
         vendeur = mock(Utilisateurs.class);
         client = mock(Utilisateurs.class);
-        DetailCommandes detail = mock(DetailCommandes.class);
-        ProduitAgricoles produit = mock(ProduitAgricoles.class);
+        detail = mock(DetailCommandes.class);
+        produit = mock(ProduitAgricoles.class);
         Agriculteurs agriculteur = mock(Agriculteurs.class);
 
         when(vendeur.getId()).thenReturn(20L);
@@ -61,7 +63,7 @@ class CommandeConfirmationTests {
         when(detail.getProduit()).thenReturn(produit);
         when(produit.getAgriculteur()).thenReturn(agriculteur);
         when(commande.getDetailCommandes()).thenReturn(List.of(detail));
-        when(commandeRepository.findById(1L)).thenReturn(Optional.of(commande));
+        when(commandeRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(commande));
         when(accessControl.requireCurrentUser()).thenReturn(vendeur);
     }
 
@@ -82,12 +84,17 @@ class CommandeConfirmationTests {
     void vendeurCanRefuseAnOrderInProgress() {
         CommandeResponse response = new CommandeResponse();
         when(commande.getStatus()).thenReturn(StatutCommandeEnum.EN_COURS);
+        when(detail.getQuantite()).thenReturn(2);
+        when(produit.getIdProduit()).thenReturn(30L);
+        when(produitRepository.findByIdForUpdate(30L)).thenReturn(Optional.of(produit));
+        when(produit.getQuantite()).thenReturn(3);
         when(commandeRepository.save(commande)).thenReturn(commande);
         when(mapper.toResponse(commande)).thenReturn(response);
 
         assertSame(response, commandeService.refuser(1L));
 
         verify(commande).setStatus(StatutCommandeEnum.REFUSEE);
+        verify(produit).setQuantite(5);
         verify(commandeRepository).save(commande);
     }
 
