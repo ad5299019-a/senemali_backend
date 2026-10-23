@@ -66,10 +66,13 @@ public class CommandeServiceImpl implements CommandeService {
             detail.setCommande(commande);
             int prixUnitaire;
             if (dr.getIdProduit() != null) {
-                ProduitAgricoles produit = produitRepository.findById(dr.getIdProduit())
+                ProduitAgricoles produit = produitRepository.findByIdForUpdate(dr.getIdProduit())
                         .orElseThrow(() -> new ResourceNotFoundException("Produit non trouvé"));
                 if (!Boolean.TRUE.equals(produit.getDisponible())) {
                     throw new IllegalArgumentException("Le produit n'est pas disponible");
+                }
+                if (dr.getQuantite() > produit.getQuantite()) {
+                    throw new IllegalArgumentException("La quantité demandée dépasse le stock disponible");
                 }
                 Long currentSellerId = produit.getAgriculteur().getId();
                 if (vendeurId != null && !vendeurId.equals(currentSellerId)) {
@@ -77,9 +80,10 @@ public class CommandeServiceImpl implements CommandeService {
                 }
                 vendeurId = currentSellerId;
                 prixUnitaire = produit.getPrix();
+                produit.setQuantite(Math.subtractExact(produit.getQuantite(), dr.getQuantite()));
                 detail.setProduit(produit);
             } else {
-                Intrants intrant = intrantRepository.findById(dr.getIdIntrant())
+                Intrants intrant = intrantRepository.findByIdForUpdate(dr.getIdIntrant())
                         .orElseThrow(() -> new ResourceNotFoundException("Intrant non trouvé"));
                 if (!Boolean.TRUE.equals(intrant.getDisponible())) {
                     throw new IllegalArgumentException("L'intrant n'est pas disponible");
@@ -88,12 +92,16 @@ public class CommandeServiceImpl implements CommandeService {
                         || !Boolean.TRUE.equals(intrant.getFournisseur().getStatut())) {
                     throw new IllegalArgumentException("L'intrant ou son fournisseur n'est pas validé");
                 }
+                if (dr.getQuantite() > intrant.getQuantite()) {
+                    throw new IllegalArgumentException("La quantité demandée dépasse le stock disponible");
+                }
                 Long currentSellerId = intrant.getFournisseur().getId();
                 if (vendeurId != null && !vendeurId.equals(currentSellerId)) {
                     throw new IllegalArgumentException("Une commande doit concerner un seul vendeur");
                 }
                 vendeurId = currentSellerId;
                 prixUnitaire = intrant.getPrix();
+                intrant.setQuantite(Math.subtractExact(intrant.getQuantite(), dr.getQuantite()));
                 detail.setIntrant(intrant);
             }
             detail.setPrixUnitaire(prixUnitaire);
@@ -192,7 +200,7 @@ public class CommandeServiceImpl implements CommandeService {
     @Override
     @Transactional
     public CommandeResponse updateStatut(Long id, StatutCommandeEnum statut) {
-        Commandes commande = commandeRepository.findById(id)
+        Commandes commande = commandeRepository.findByIdForUpdate(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Commande non trouvée"));
         Utilisateurs utilisateurCourant = accessControl.requireCurrentUser();
         boolean client = commande.getUtilisateur().getId().equals(utilisateurCourant.getId());
@@ -214,6 +222,21 @@ public class CommandeServiceImpl implements CommandeService {
             }
         } else {
             throw new IllegalArgumentException("Ce statut ne peut pas être défini via cet endpoint");
+        }
+        if (statut == StatutCommandeEnum.ANNULEE) {
+            for (DetailCommandes detail : commande.getDetailCommandes()) {
+                if (detail.getProduit() != null) {
+                    ProduitAgricoles produit = produitRepository
+                            .findByIdForUpdate(detail.getProduit().getIdProduit())
+                            .orElseThrow(() -> new ResourceNotFoundException("Produit non trouvé"));
+                    produit.setQuantite(Math.addExact(produit.getQuantite(), detail.getQuantite()));
+                } else if (detail.getIntrant() != null) {
+                    Intrants intrant = intrantRepository
+                            .findByIdForUpdate(detail.getIntrant().getIdIntrant())
+                            .orElseThrow(() -> new ResourceNotFoundException("Intrant non trouvé"));
+                    intrant.setQuantite(Math.addExact(intrant.getQuantite(), detail.getQuantite()));
+                }
+            }
         }
         commande.setStatus(statut);
         return mapper.toResponse(commandeRepository.save(commande));
