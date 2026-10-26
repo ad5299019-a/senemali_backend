@@ -126,10 +126,10 @@ class CommandeServiceImplTests {
         when(commandeRepository.findByIdForUpdate(40L)).thenReturn(Optional.of(order));
         when(produitRepository.findByIdForUpdate(30L)).thenReturn(Optional.of(product));
 
-        service.updateStatut(40L, StatutCommandeEnum.ANNULER);
+        service.updateStatut(40L, StatutCommandeEnum.ANNULEE);
 
         assertEquals(8, product.getQuantite());
-        assertEquals(StatutCommandeEnum.ANNULER, order.getStatus());
+        assertEquals(StatutCommandeEnum.ANNULEE, order.getStatus());
     }
 
     private CommandeRequest request(int quantity) {
